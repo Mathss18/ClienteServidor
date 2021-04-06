@@ -178,7 +178,7 @@ public class ServidorView extends javax.swing.JFrame {
         try {
             sc.carregar(Integer.parseInt(this.portaServidor.getText()));
         } catch (IOException ex) {
-            Logger.getLogger(ServidorView.class.getName()).log(Level.SEVERE, null, ex);
+        	System.out.println("Conexão encerrada pelo cliente\n");
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 /**
  *
@@ -21,9 +22,18 @@ public class ClienteController {
     private InputStreamReader inPut;
     private BufferedReader bf;
     
-    public boolean conectar(String ip, String porta) throws IOException{
+    public boolean conectar(String ip, int porta){
         System.out.println(ip+' '+porta);
-        clientSocket = new Socket("localhost", 4949);
+        
+        try {
+			clientSocket = new Socket(ip, porta);
+		} catch (UnknownHostException e) {
+			System.out.println("Host desconhecido\n");
+			return false;
+		} catch (IOException e) {
+			System.out.println("Não possível se conectar ao servidor\n");
+			return false;
+		}
         
         return true;
         
@@ -46,7 +56,7 @@ public class ClienteController {
     
     public void desconectar() throws IOException{
         pr.close();
-	bf.close();
-	clientSocket.close();
+		bf.close();
+		clientSocket.close();
     }
 }

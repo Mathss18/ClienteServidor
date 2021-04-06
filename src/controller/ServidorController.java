@@ -23,23 +23,23 @@ public class ServidorController {
 
         ServerSocket serverSocket = null;
         try {
-            serverSocket = new ServerSocket(4949);
+            serverSocket = new ServerSocket(porta);
         } catch (IOException e) {
-            System.err.println("N√£o pode ouvir na porta " + porta);
+            System.err.println("N„o pode ouvir na porta " + porta);
             System.exit(1);
         }
 
         Socket clientSocket = null;
-        System.out.println("Esperando conex√£o.....");
+        System.out.println("Esperando conex„o.....");
 
         try {
             clientSocket = serverSocket.accept();
         } catch (IOException e) {
-            System.err.println("Falha ao aceitar conex√£o.");
+            System.err.println("Falha ao aceitar conex„o.");
             System.exit(1);
         }
 
-        System.out.println("Conex√£o bem sucedida");
+        System.out.println("Conex„o bem sucedida");
 
         InputStreamReader inPut = new InputStreamReader(clientSocket.getInputStream());
         BufferedReader bf = new BufferedReader(inPut);

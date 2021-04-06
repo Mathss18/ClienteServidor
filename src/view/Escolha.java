@@ -35,7 +35,7 @@ public class Escolha extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("Escolha um opÃ§Ã£o:");
+        jLabel1.setText("Escolha uma opção:");
 
         jButton1.setText("Cliente");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
