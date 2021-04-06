@@ -19,7 +19,7 @@ import javax.net.ssl.SSLServerSocket;
  */
 public class ServidorController {
 
-    public void carregar(int porta) throws IOException {
+    public void carregar(int porta){
 
         ServerSocket serverSocket = null;
         try {
@@ -41,17 +41,30 @@ public class ServidorController {
 
         System.out.println("Conexao bem sucedida");
 
-        InputStreamReader inPut = new InputStreamReader(clientSocket.getInputStream());
-        BufferedReader bf = new BufferedReader(inPut);
-        PrintWriter outPut = new PrintWriter(clientSocket.getOutputStream(), true);
-        String str;
+        InputStreamReader inPut;
+		try {
+			inPut = new InputStreamReader(clientSocket.getInputStream());
+			BufferedReader bf = new BufferedReader(inPut);
+	        PrintWriter outPut = new PrintWriter(clientSocket.getOutputStream(), true);
+	        String str;
+	        
+	        while((str = bf.readLine()) != null){
+	            System.out.println("Cliente Enviou: "+str);
+	            outPut.println(str.toUpperCase());
+	        }
+	        System.out.println("Cliente: "+str);
+	        System.out.println("Conexao encerrada pelo cliente\n");
+	        serverSocket.close();
+		} catch (IOException e) {
+			 System.out.println("Conexao encerrada pelo cliente\n");
+			 try {
+				serverSocket.close();
+			} catch (IOException e1) {
+				System.out.println("Não foi possível reiniciar o servidor, abra novamente\n");
+				System.exit(1);
+			}
+		}
         
-        while((str = bf.readLine()) != "exit"){
-            System.out.println("Cliente Enviou: "+str);
-            outPut.println(str.toUpperCase());
-        }
-        
-        System.out.println("Cliente: "+str);
     }
 
 }

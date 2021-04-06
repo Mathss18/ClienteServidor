@@ -27,6 +27,9 @@ public class ClienteController {
         
         try {
 			clientSocket = new Socket(ip, porta);
+			pr = new PrintWriter(clientSocket.getOutputStream(), true);
+	        inPut = new InputStreamReader(clientSocket.getInputStream());
+	        bf = new BufferedReader(inPut);
 		} catch (UnknownHostException e) {
 			System.out.println("Host desconhecido\n");
 			return false;
@@ -40,9 +43,7 @@ public class ClienteController {
     }
     
     public String enviarMensagem(String msg) throws IOException{
-        pr = new PrintWriter(clientSocket.getOutputStream(), true);
-        inPut = new InputStreamReader(clientSocket.getInputStream());
-        bf = new BufferedReader(inPut);
+        
         //String resp = bf.readLine();
         pr.println(msg);
         pr.flush();
@@ -54,9 +55,17 @@ public class ClienteController {
         return bf.readLine();
     }
     
-    public void desconectar() throws IOException{
-        pr.close();
-		bf.close();
-		clientSocket.close();
+    public boolean desconectar(){
+		try {
+			pr.close();
+			bf.close();
+			clientSocket.close();
+		} catch (IOException e) {
+			System.out.println("Não foi possível desconectar\n");
+			return false;
+		}
+		System.out.println("Cliente desconectado\n");
+		return true;
+		
     }
 }
