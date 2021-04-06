@@ -31,7 +31,7 @@ public class ClienteController {
 			System.out.println("Host desconhecido\n");
 			return false;
 		} catch (IOException e) {
-			System.out.println("Não possível se conectar ao servidor\n");
+			System.out.println("Nao possivel se conectar ao servidor\n");
 			return false;
 		}
         

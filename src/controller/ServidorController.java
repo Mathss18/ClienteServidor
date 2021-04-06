@@ -25,21 +25,21 @@ public class ServidorController {
         try {
             serverSocket = new ServerSocket(porta);
         } catch (IOException e) {
-            System.err.println("Não pode ouvir na porta " + porta);
+            System.err.println("Nao pode ouvir na porta " + porta);
             System.exit(1);
         }
 
         Socket clientSocket = null;
-        System.out.println("Esperando conexão.....");
+        System.out.println("Esperando conexao.....");
 
         try {
             clientSocket = serverSocket.accept();
         } catch (IOException e) {
-            System.err.println("Falha ao aceitar conexão.");
+            System.err.println("Falha ao aceitar conexao.");
             System.exit(1);
         }
 
-        System.out.println("Conexão bem sucedida");
+        System.out.println("Conexao bem sucedida");
 
         InputStreamReader inPut = new InputStreamReader(clientSocket.getInputStream());
         BufferedReader bf = new BufferedReader(inPut);
