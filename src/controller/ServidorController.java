@@ -11,13 +11,27 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.net.ssl.SSLServerSocket;
 
 /**
  *
  * @author Maths
  */
-public class ServidorController {
+public class ServidorController extends Thread {
+    
+    public ServidorController(){
+        start();
+    }
+    
+    public void run(){
+        try {
+            carregar(4949);
+        } catch (IOException ex) {
+            Logger.getLogger(ServidorController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     public void carregar(int porta) throws IOException {
 

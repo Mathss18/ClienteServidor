@@ -43,20 +43,17 @@ public class ClienteController {
         pr = new PrintWriter(clientSocket.getOutputStream(), true);
         inPut = new InputStreamReader(clientSocket.getInputStream());
         bf = new BufferedReader(inPut);
-        //String resp = bf.readLine();
+
         pr.println(msg);
         pr.flush();
-        //System.out.println("Servidor Respondeu: "+resp);
         
-        //reqResp[0] = msg; //Request
-        //reqResp[1] = bf.readLine(); //Response
         
         return bf.readLine();
     }
     
     public void desconectar() throws IOException{
         pr.close();
-		bf.close();
-		clientSocket.close();
+        bf.close();
+        clientSocket.close();
     }
 }
