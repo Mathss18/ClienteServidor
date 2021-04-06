@@ -175,11 +175,7 @@ public class ServidorView extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         ServidorController sc = new ServidorController();
-        try {
-            sc.carregar(Integer.parseInt(this.portaServidor.getText()));
-        } catch (IOException ex) {
-        	System.out.println("Conexao encerrada pelo cliente\n");
-        }
+        sc.carregar(Integer.parseInt(this.portaServidor.getText()));
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void portaServidorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_portaServidorActionPerformed

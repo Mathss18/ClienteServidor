@@ -320,12 +320,11 @@ public class ClienteView extends javax.swing.JFrame {
     }//GEN-LAST:event_txtEnviarActionPerformed
 
     private void btnDesconectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDesconectarActionPerformed
-        try {
+       
             // TODO add your handling code here:
-            cc.desconectar();
-        } catch (IOException ex) {
-            Logger.getLogger(ClienteView.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            boolean desconectou = cc.desconectar();
+            if(desconectou)
+                btnDesconectar.setEnabled(false);
     }//GEN-LAST:event_btnDesconectarActionPerformed
 
     /**
