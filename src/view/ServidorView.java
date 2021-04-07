@@ -36,7 +36,7 @@ public class ServidorView extends javax.swing.JFrame {
         jPanel7 = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
         portaServidor = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        btnConectar = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
@@ -54,10 +54,10 @@ public class ServidorView extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("CONECTAR");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnConectar.setText("CONECTAR");
+        btnConectar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnConectarActionPerformed(evt);
             }
         });
 
@@ -79,7 +79,7 @@ public class ServidorView extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(portaServidor, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnConectar, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
@@ -91,7 +91,7 @@ public class ServidorView extends javax.swing.JFrame {
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(portaServidor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(btnConectar))
                 .addGap(45, 45, 45))
         );
 
@@ -172,11 +172,11 @@ public class ServidorView extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectarActionPerformed
         // TODO add your handling code here:
         ServidorController sc = new ServidorController();
-        sc.carregar(Integer.parseInt(this.portaServidor.getText()));
-    }//GEN-LAST:event_jButton1ActionPerformed
+        sc.abrirServidor(Integer.parseInt(this.portaServidor.getText()));
+    }//GEN-LAST:event_btnConectarActionPerformed
 
     private void portaServidorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_portaServidorActionPerformed
         // TODO add your handling code here:
@@ -219,7 +219,7 @@ public class ServidorView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnConectar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;

@@ -55,7 +55,7 @@ public class ClienteView extends javax.swing.JFrame {
         jCheckBox1 = new javax.swing.JCheckBox();
         jPanel10 = new javax.swing.JPanel();
         txtEnviar = new javax.swing.JTextField();
-        jButton3 = new javax.swing.JButton();
+        btnEnviar = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         chat = new javax.swing.JTextArea();
@@ -187,10 +187,11 @@ public class ClienteView extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("Enviar");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnEnviar.setText("Enviar");
+        btnEnviar.setEnabled(false);
+        btnEnviar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnEnviarActionPerformed(evt);
             }
         });
 
@@ -211,7 +212,7 @@ public class ClienteView extends javax.swing.JFrame {
                     .addGroup(jPanel10Layout.createSequentialGroup()
                         .addComponent(txtEnviar, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE))
+                        .addComponent(btnEnviar, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE))
                     .addGroup(jPanel10Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -226,7 +227,7 @@ public class ClienteView extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtEnviar, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3))
+                    .addComponent(btnEnviar))
                 .addGap(5, 5, 5))
         );
 
@@ -282,26 +283,28 @@ public class ClienteView extends javax.swing.JFrame {
         // TODO add your handling code here:
         
         boolean conectou = cc.conectar(this.ipCliente.getText(), Integer.parseInt(this.portaCliente.getText()));
-        if(conectou)
-          btnDesconectar.setEnabled(true);
+        //String resp = cc.escutar();
+        if(conectou){
+            btnDesconectar.setEnabled(conectou);
+            btnEnviar.setEnabled(conectou);
+        }
+          
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
         try {
-            String request = cc.enviarMensagem(txtEnviar.getText());
-            //String request = reqResp[0];
-            //String response = reqResp[1];
+            String response = cc.enviarMensagem(txtEnviar.getText());
             
             chat.append("Cliente: "+txtEnviar.getText()+"\n");
-            chat.append("Servidor: "+request+"\n");
+            chat.append("Servidor: "+response+"\n");
             chat.append("--------------------"+"\n");
            
             
         } catch (IOException ex) {
-            Logger.getLogger(ClienteView.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Não foi possivel se conectar ao servidor");
         }
         
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_btnEnviarActionPerformed
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
         // TODO add your handling code here:
@@ -323,8 +326,11 @@ public class ClienteView extends javax.swing.JFrame {
        
             // TODO add your handling code here:
             boolean desconectou = cc.desconectar();
-            if(desconectou)
-                btnDesconectar.setEnabled(false);
+            if(desconectou){
+                btnDesconectar.setEnabled(desconectou);
+                btnEnviar.setEnabled(desconectou);
+            }
+                
     }//GEN-LAST:event_btnDesconectarActionPerformed
 
     /**
@@ -364,10 +370,10 @@ public class ClienteView extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDesconectar;
+    private javax.swing.JButton btnEnviar;
     private javax.swing.JTextArea chat;
     private javax.swing.JTextField ipCliente;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton3;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
