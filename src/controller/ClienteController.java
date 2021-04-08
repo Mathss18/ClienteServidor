@@ -37,7 +37,9 @@ public class ClienteController {
         output.println(msg);
         output.flush();
         
+        
         return escutar();
+        
     }
 
     public String escutar() throws IOException {

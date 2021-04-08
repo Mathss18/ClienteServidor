@@ -1,6 +1,7 @@
 
 import view.ClienteView;
 import view.Escolha;
+import view.LoginView;
 import view.ServidorView;
 
 
@@ -11,6 +12,9 @@ public class Main {
         
         //ServidorView v = new ServidorView();
         //v.setVisible(true);
+        
+        //LoginView l = new LoginView();
+        //l.setVisible(true);
         
         Escolha e = new Escolha();
         e.setVisible(true);

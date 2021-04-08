@@ -19,7 +19,7 @@ public class ClienteView extends javax.swing.JFrame {
 
     ClienteController cc = new ClienteController();
     private String[] reqResp = new String[2];
-    
+
     public ClienteView() {
         initComponents();
     }
@@ -99,19 +99,21 @@ public class ClienteView extends javax.swing.JFrame {
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel5)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel3))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(ipCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(portaCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(48, 48, 48)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(ipCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(portaCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(161, 161, 161)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnDesconectar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(124, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -119,10 +121,11 @@ public class ClienteView extends javax.swing.JFrame {
                 .addGap(0, 13, Short.MAX_VALUE)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ipCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
-                    .addComponent(jButton1))
+                    .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton1)
+                        .addComponent(ipCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(portaCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -276,29 +279,28 @@ public class ClienteView extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        
+
         boolean conectou = cc.conectar(this.ipCliente.getText(), Integer.parseInt(this.portaCliente.getText()));
         //String resp = cc.escutar();
-        if(conectou){
+        if (conectou) {
             btnDesconectar.setEnabled(conectou);
             btnEnviar.setEnabled(conectou);
         }
-          
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
+        String response;
         try {
-            String response = cc.enviarMensagem(txtEnviar.getText());
-            
-            chat.append("Cliente: "+txtEnviar.getText()+"\n");
-            chat.append("Servidor: "+response+"\n");
-            chat.append("--------------------"+"\n");
-           
-            
+            response = cc.enviarMensagem(txtEnviar.getText());
+            chat.append("Cliente: " + txtEnviar.getText() + "\n");
+            chat.append("Servidor: " + response + "\n");
+            chat.append("--------------------" + "\n");
         } catch (IOException ex) {
-            System.out.println("Não foi possivel se conectar ao servidor");
+            Logger.getLogger(ClienteView.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
+
     }//GEN-LAST:event_btnEnviarActionPerformed
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
@@ -318,14 +320,14 @@ public class ClienteView extends javax.swing.JFrame {
     }//GEN-LAST:event_txtEnviarActionPerformed
 
     private void btnDesconectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDesconectarActionPerformed
-       
-            // TODO add your handling code here:
-            boolean desconectou = cc.desconectar();
-            if(desconectou){
-                btnDesconectar.setEnabled(desconectou);
-                btnEnviar.setEnabled(desconectou);
-            }
-                
+
+        // TODO add your handling code here:
+        boolean desconectou = cc.desconectar();
+        if (desconectou) {
+            btnDesconectar.setEnabled(desconectou);
+            btnEnviar.setEnabled(desconectou);
+        }
+
     }//GEN-LAST:event_btnDesconectarActionPerformed
 
     /**
@@ -388,5 +390,4 @@ public class ClienteView extends javax.swing.JFrame {
     private javax.swing.JTextField txtEnviar;
     // End of variables declaration//GEN-END:variables
 
-    
 }
