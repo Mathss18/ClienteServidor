@@ -16,7 +16,7 @@ public class ClienteController {
     private String response;
 
     public boolean conectar(String ip, int porta) {
-        System.out.println(ip + ' ' + porta);
+        System.out.println("[CLIENTE] Conectando ao servdor...\n");
 
         try {
             //CONECTA CLIENTE AO SERVIDOR - setando as streams
@@ -25,7 +25,7 @@ public class ClienteController {
             output = new PrintWriter(clientSocket.getOutputStream());
             
         } catch (IOException ex) {
-            System.err.println("Falhou Ao conectar o cliente");
+            System.err.println("[CLIENTE] Falha ao conectar com o servidor\n");
             return false;
         }
 
@@ -44,7 +44,7 @@ public class ClienteController {
 
     public String escutar() throws IOException {
         response = input.readLine();
-        System.out.println("Recebido do Servidor: " + response);
+        System.out.println("[CLIENTE] Recebido do Servidor: " + response+"\n");
         return response;
         
     }
@@ -56,10 +56,10 @@ public class ClienteController {
             clientSocket.close();
 
         } catch (IOException e) {
-            System.out.println("Nao foi possivel desconectar\n");
+            System.out.println("[CLIENTE] Nao foi possivel desconectar\n");
             return false;
         }
-        System.out.println("Cliente desconectado\n");
+        System.out.println("[CLIENTE] Cliente desconectado\n");
         return true;
 
     }

@@ -9,8 +9,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ServidorController extends Thread {
@@ -44,11 +46,11 @@ public class ServidorController extends Thread {
 
             //Adiciona no array de clientes
             clientes.add(clientSocket);
-            System.out.println(clientes);
+            System.out.println("[SERVER] Lista de Clientes: "+clientes+"\n");
 
             //O que o Servidor recebe do cliente
             while ((request = input.readLine()) != null) {
-                System.out.println("Recebido do Cliente: " + request);
+                System.out.println("[SERVER] Recebido do Cliente: " + request + "\n");
 
                 //O que o Servidor responde para o  cliente
                 output.println(tratarDados(request));
@@ -61,23 +63,24 @@ public class ServidorController extends Thread {
         }
     }
 
-    public void abrirServidor(int porta) {
-
+    public void abrirServidor(int porta, JTable tabelaIp) {
+        
         try {
             //Cria os objetos necessário para instânciar o servidor
             serverSocket = new ServerSocket(porta);
             clientes = new ArrayList<>();
-
+           
             while (true) {
-                System.out.println("Aguardando conexão...");
-                Socket con = serverSocket.accept();
-                System.out.println("Cliente conectado...");
+                System.out.println("[SERVER] Aguardando conexão...\n");
+                Socket con = serverSocket.accept(); //Linha que trava o servidor
+                System.out.println("[SERVER] Cliente conectado\n");
                 Thread t = new ServidorController(con);
+                atualizarLista(con,tabelaIp);
                 t.start();
+                
             }
 
         } catch (Exception e) {
-
             e.printStackTrace();
         }
 
@@ -85,7 +88,7 @@ public class ServidorController extends Thread {
 
     private String tratarDados(String dados) {
         String cod = null;
-        System.out.println(dados);
+        
         JSONObject jsonObj = new JSONObject(dados);
 
         //Armazena o codigo da requisicao
@@ -123,14 +126,13 @@ public class ServidorController extends Thread {
         JSONObject response = new JSONObject();
         int soma = 0;
 
-        System.out.println("REQ "+request);
         JSONArray arr = request.getJSONArray("respostas");
 
         for (int i = 0; i < arr.length(); i++) {
             if(Integer.parseInt(arr.getJSONObject(i).getString("id")) != 5)
                 soma += Integer.parseInt(arr.getJSONObject(i).getString("reposta"));
         }
-        System.out.println("Soma: "+soma);
+
         response.put("cod", "8");
         if(soma > 3){
             response.put("covid", "true");
@@ -144,9 +146,22 @@ public class ServidorController extends Thread {
 
     private void logout(JSONObject dados) {
         JSONObject request = dados;
-        //clientSocket.close();
+        try {
+            clientSocket.close();
+        } catch (IOException ex) {
+            System.err.println("[SERVER] Impossivel Desconectar Cliente\n");
+        }
         clientes.remove(clientSocket);
-        System.out.println(clientes);
-        System.out.println("Cliente Desconectado.");
+        System.out.println("[SERVER] Lista de Clientes: "+clientes+"\n");
+        System.out.println("[SERVER] Cliente Desconectado\n");
+    }
+
+    private void atualizarLista(Socket con,JTable tabelaIp) {
+        DefaultTableModel modelo = (DefaultTableModel) tabelaIp.getModel();
+        Object[] dados  = {
+            con.getInetAddress(),
+            con.getPort()
+        };
+        modelo.addRow(dados);
     }
 }

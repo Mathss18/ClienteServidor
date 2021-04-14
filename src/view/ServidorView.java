@@ -41,7 +41,7 @@ public class ServidorView extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tabelaIp = new javax.swing.JTable();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel1 = new javax.swing.JLabel();
 
@@ -95,7 +95,7 @@ public class ServidorView extends javax.swing.JFrame {
                 .addGap(45, 45, 45))
         );
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tabelaIp.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -103,7 +103,7 @@ public class ServidorView extends javax.swing.JFrame {
                 "IP", "PORTA"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tabelaIp);
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
@@ -174,8 +174,9 @@ public class ServidorView extends javax.swing.JFrame {
 
     private void btnConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectarActionPerformed
         // TODO add your handling code here:
+        String porta = this.portaServidor.getText();
         ServidorController sc = new ServidorController();
-        sc.abrirServidor(Integer.parseInt(this.portaServidor.getText()));
+        sc.abrirServidor(Integer.parseInt(porta),tabelaIp);
     }//GEN-LAST:event_btnConectarActionPerformed
 
     private void portaServidorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_portaServidorActionPerformed
@@ -229,7 +230,7 @@ public class ServidorView extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextField portaServidor;
+    private javax.swing.JTable tabelaIp;
     // End of variables declaration//GEN-END:variables
 }

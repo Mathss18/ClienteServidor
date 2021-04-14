@@ -220,18 +220,28 @@ public class FormularioView extends javax.swing.JFrame {
 
         try {
             response = cc.enviarMensagem(requestJson.toString());
-           
-            System.out.println("RESPOSTA: " + response);
-            
-            String[] options = {"Quero falar com um profissional de saude", "Quero ver uma lista de hospitais disponiveis"};
+            responseJson = new JSONObject(response);    
 
-            int option = JOptionPane.showOptionDialog(null, "A probabilidade de você estar com COVID é alta, então:",
-                    "O que deseja fazer?",
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-            
-            System.out.println(option);
+            if (responseJson.getString("covid").equals("true")) {
+                String[] options = {"Chat com Medico", "Ver lista de hospitais"};
+
+                int option = JOptionPane.showOptionDialog(null, "A probabilidade de você estar com COVID é ALTA, então:",
+                        "O que deseja fazer?",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+
+                System.out.println(option);
+            } else {
+                String[] options = {"Refazer Formulario", "Cancelar"};
+
+                int option = JOptionPane.showOptionDialog(null, "A probabilidade de você estar com COVID é BAIXA, então:",
+                        "O que deseja fazer?",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+
+                System.out.println(option);
+            }
+
         } catch (IOException ex) {
-            System.err.println("Falha ao enviar ou receber resposta do servidor");
+            System.err.println("[CLIENTE] Falha ao enviar ou receber resposta do servidor");
         }
 
     }//GEN-LAST:event_btnEnviarRespostasActionPerformed
@@ -248,7 +258,7 @@ public class FormularioView extends javax.swing.JFrame {
             cc.desconectar();
             this.dispose();
         } catch (IOException ex) {
-            System.err.println("Falha ao enviar ou receber resposta do servidor");
+            System.err.println("[CLIENTE] Falha ao enviar ou receber resposta do servidor");
         }
     }//GEN-LAST:event_btnDeslogarActionPerformed
 
