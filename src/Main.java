@@ -1,5 +1,5 @@
 
-import view.ClienteView;
+import view.ChatView;
 import view.Escolha;
 import view.LoginView;
 import view.ServidorView;
@@ -7,7 +7,7 @@ import view.ServidorView;
 
 public class Main {
     public static void main(String[] args) {
-        //ClienteView c = new ClienteView();
+        //ChatView c = new ChatView();
         //c.setVisible(true);
         
         //ServidorView v = new ServidorView();

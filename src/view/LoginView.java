@@ -63,7 +63,7 @@ public class LoginView extends javax.swing.JFrame {
             }
         });
 
-        inputPorta.setText("4949");
+        inputPorta.setText("8899");
         inputPorta.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 inputPortaActionPerformed(evt);
@@ -176,7 +176,7 @@ public class LoginView extends javax.swing.JFrame {
                     this.dispose();
                     break;
                 case "saude":
-                    ClienteView c = new ClienteView();
+                    ChatView c = new ChatView();
                     c.setVisible(true);
                     break;
                 case "admin":

@@ -15,12 +15,12 @@ import javax.swing.text.StyleContext;
  *
  * @author Maths
  */
-public class ClienteView extends javax.swing.JFrame {
+public class ChatView extends javax.swing.JFrame {
 
     ClienteController cc = new ClienteController();
     private String[] reqResp = new String[2];
 
-    public ClienteView() {
+    public ChatView() {
         initComponents();
     }
 
@@ -297,7 +297,7 @@ public class ClienteView extends javax.swing.JFrame {
             chat.append("Servidor: " + response + "\n");
             chat.append("--------------------" + "\n");
         } catch (IOException ex) {
-            Logger.getLogger(ClienteView.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ChatView.class.getName()).log(Level.SEVERE, null, ex);
         }
 
 
@@ -347,20 +347,21 @@ public class ClienteView extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ClienteView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ChatView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ClienteView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ChatView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ClienteView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ChatView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ClienteView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ChatView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ClienteView().setVisible(true);
+                new ChatView().setVisible(true);
             }
         });
     }

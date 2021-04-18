@@ -47,7 +47,7 @@ public class ServidorView extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        portaServidor.setText("4949");
+        portaServidor.setText("8899");
         portaServidor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 portaServidorActionPerformed(evt);
