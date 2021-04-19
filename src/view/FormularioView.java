@@ -193,22 +193,22 @@ public class FormularioView extends javax.swing.JFrame {
         String isolamento = comboIsolamento.getSelectedItem().toString();
 
         resposta1.put("id", "1");
-        resposta1.put("reposta", (febre == "Sim") ? "1" : "0");
+        resposta1.put("resposta", (febre == "Sim") ? "1" : "0");
 
         resposta2.put("id", "2");
-        resposta2.put("reposta", (tosse == "Sim") ? "1" : "0");
+        resposta2.put("resposta", (tosse == "Sim") ? "1" : "0");
 
         resposta3.put("id", "3");
-        resposta3.put("reposta", (respirar == "Sim") ? "1" : "0");
+        resposta3.put("resposta", (respirar == "Sim") ? "1" : "0");
 
         resposta4.put("id", "4");
-        resposta4.put("reposta", (contato == "Sim") ? "1" : "0");
+        resposta4.put("resposta", (contato == "Sim") ? "1" : "0");
 
         resposta5.put("id", "5");
-        resposta5.put("reposta", idade);
+        resposta5.put("resposta", idade);
 
         resposta6.put("id", "6");
-        resposta6.put("reposta", (isolamento == "Sim") ? "1" : "0");
+        resposta6.put("resposta", (isolamento == "Sim") ? "1" : "0");
 
         requestJson.put("cod", "6");
         requestJson.append("respostas", resposta1);

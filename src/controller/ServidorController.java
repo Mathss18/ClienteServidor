@@ -130,7 +130,7 @@ public class ServidorController extends Thread {
 
         for (int i = 0; i < arr.length(); i++) {
             if(Integer.parseInt(arr.getJSONObject(i).getString("id")) != 5)
-                soma += Integer.parseInt(arr.getJSONObject(i).getString("reposta"));
+                soma += Integer.parseInt(arr.getJSONObject(i).getString("resposta"));
         }
 
         response.put("cod", "8");
