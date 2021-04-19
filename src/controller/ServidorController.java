@@ -32,7 +32,7 @@ public class ServidorController extends Thread {
         try {
             input = new BufferedReader(new InputStreamReader(con.getInputStream()));
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("[SERVER] Erro ao abrir conexão");
         }
     }
 
@@ -58,7 +58,7 @@ public class ServidorController extends Thread {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("[SERVER] Thread Fechada.");
 
         }
     }
@@ -81,7 +81,7 @@ public class ServidorController extends Thread {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("[SERVER] Porta já utilizada, tente outra...");
         }
 
     }
@@ -104,6 +104,8 @@ public class ServidorController extends Thread {
                 break;
             case "6":
                 return probabilidadeCovid(jsonObj);
+            default:
+                break;
 
         }
         return null;
@@ -117,6 +119,8 @@ public class ServidorController extends Thread {
         response.put("tipo", "usuario");
         response.put("success", "true");
 
+        System.out.println("[SERVER] Enviado para o Cliente: " + response + "\n");
+        
         return response.toString();
 
     }
@@ -129,7 +133,7 @@ public class ServidorController extends Thread {
         JSONArray arr = request.getJSONArray("respostas");
 
         for (int i = 0; i < arr.length(); i++) {
-            if(Integer.parseInt(arr.getJSONObject(i).getString("id")) != 5)
+            if(Integer.parseInt(arr.getJSONObject(i).getString("id")) != 4)
                 soma += Integer.parseInt(arr.getJSONObject(i).getString("resposta"));
         }
 
@@ -141,17 +145,22 @@ public class ServidorController extends Thread {
             response.put("covid", "false");
         }
 
+        System.out.println("[SERVER] Enviado para o Cliente: " + response + "\n");
+        
         return response.toString();
     }
 
     private void logout(JSONObject dados) {
         JSONObject request = dados;
+        clientes.remove(clientSocket);
         try {
+            input.close();
+            output.close();
             clientSocket.close();
+            
         } catch (IOException ex) {
             System.err.println("[SERVER] Impossivel Desconectar Cliente\n");
         }
-        clientes.remove(clientSocket);
         System.out.println("[SERVER] Lista de Clientes: "+clientes+"\n");
         System.out.println("[SERVER] Cliente Desconectado\n");
     }

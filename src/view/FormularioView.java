@@ -202,10 +202,11 @@ public class FormularioView extends javax.swing.JFrame {
         resposta3.put("resposta", (respirar == "Sim") ? "1" : "0");
 
         resposta4.put("id", "4");
-        resposta4.put("resposta", (contato == "Sim") ? "1" : "0");
-
+        resposta4.put("resposta", idade);
+        
         resposta5.put("id", "5");
-        resposta5.put("resposta", idade);
+        resposta5.put("resposta", (contato == "Sim") ? "1" : "0");
+
 
         resposta6.put("id", "6");
         resposta6.put("resposta", (isolamento == "Sim") ? "1" : "0");
@@ -220,26 +221,38 @@ public class FormularioView extends javax.swing.JFrame {
 
         try {
             response = cc.enviarMensagem(requestJson.toString());
-            responseJson = new JSONObject(response);    
 
-            if (responseJson.getString("covid").equals("true")) {
-                String[] options = {"Chat com Medico", "Ver lista de hospitais"};
+            if (!response.equals("null")) {
+                responseJson = new JSONObject(response);
 
-                int option = JOptionPane.showOptionDialog(null, "A probabilidade de você estar com COVID é ALTA, então:",
-                        "O que deseja fazer?",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                if (responseJson.getString("covid").equals("true")) {
+                    String[] options = {"Chat com Medico", "Ver lista de hospitais"};
 
-                System.out.println(option);
-            } else {
-                String[] options = {"Refazer Formulario", "Cancelar"};
+                    int option = JOptionPane.showOptionDialog(null, "A probabilidade de você estar com COVID é ALTA, então:",
+                            "O que deseja fazer?",
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
-                int option = JOptionPane.showOptionDialog(null, "A probabilidade de você estar com COVID é BAIXA, então:",
-                        "O que deseja fazer?",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                    System.out.println(option);
+                } else {
+                    String[] options = {"Refazer Formulario", "Cancelar"};
 
-                System.out.println(option);
+                    int option = JOptionPane.showOptionDialog(null, "A probabilidade de você estar com COVID é BAIXA, então:",
+                            "O que deseja fazer?",
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+
+                    System.out.println(option);
+                }
             }
+            else{
+                String[] options = {"Tentar Novamente", "Cancelar"};
 
+                    int option = JOptionPane.showOptionDialog(null, "Falha ao se comunicar com o servidor!",
+                            "O que deseja fazer?",
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+
+                    System.out.println(option);
+            }
+                
         } catch (IOException ex) {
             System.err.println("[CLIENTE] Falha ao enviar ou receber resposta do servidor");
         }
