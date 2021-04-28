@@ -35,7 +35,15 @@ public class ClienteController {
 
     }
     
+    public void enviarSemEscuta(String msg){
+        System.out.println("[CLIENTE] Enviado para o Servidor: " +msg+"\n");
+        output.println(msg);
+        output.flush();   
+    }
+    
+    
     public String enviarMensagem(String msg){
+        System.out.println("[CLIENTE] Enviado para o Servidor: " +msg+"\n");
         output.println(msg);
         output.flush();
         
@@ -51,7 +59,7 @@ public class ClienteController {
            System.err.println("[CLIENTE] Falha ao enviar ou receber resposta do servidor");
         }
         
-        System.out.println("[CLIENTE] Recebido do Servidor: " + response+"\n");
+        System.out.println("[CLIENTE] Recebido do Servidor: " +response+"\n");
         return response;
     }
 

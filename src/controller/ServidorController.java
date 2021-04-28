@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import model.Chat;
 import model.Cliente;
 import model.Hospital;
 import org.json.JSONArray;
@@ -22,6 +23,8 @@ public class ServidorController extends Thread {
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private static ArrayList<Cliente> clientes;
+    private static ArrayList<Socket> socks;
+    private static ArrayList<Chat> chats;
     private Cliente c = new Cliente();
     
     private static ArrayList<Hospital> hospitais = new ArrayList<>();
@@ -61,6 +64,7 @@ public class ServidorController extends Thread {
             }
 
         } catch (Exception e) {
+            //Logger.getLogger(ServidorController.class.getName()).log(java.util.logging.Level.SEVERE, null, e);
             System.out.println("[SERVER] Thread do cliente Fechada.");
             clientes.remove(c);
         }
@@ -73,6 +77,7 @@ public class ServidorController extends Thread {
             //Cria os objetos necessário para instânciar o servidor
             serverSocket = new ServerSocket(porta);
             clientes = new ArrayList<>();
+            socks = new ArrayList<>();
            
             while (true) {
                 System.out.println("[SERVER] Aguardando conexão...\n");
@@ -137,39 +142,119 @@ public class ServidorController extends Thread {
     }
     
     private String escolhaChat(JSONObject dados) {
+        String respostaSaude;
+        int aux = 0;
+        
         JSONObject response = new JSONObject();
         response.put("cod", "72");
         response.put("sucesso", "false");
+        response.put("usuario", "");
+        
+        respostaSaude = response.toString();
         
         for (int i = 0; i < clientes.size(); i++) {
-            if(clientes.get(i).getTipo() == "saude"){
-                //String respostaSaude = iniciarChat(dados.getString("usuario"), clientes.get(i).getNome());
-                break;
+            if("saude".equals(clientes.get(i).getTipo()) && aux == 0){
+                respostaSaude = iniciarChatSaude(dados.getString("usuario"), clientes.get(i).getNome());
+                System.out.println("[SERVER] Resposta iniciar chat: " + respostaSaude + "\n");
+                aux++;
             }
         }
-        
-        return response.toString();
+        if(clientes.size()<=0){
+            System.out.println("[SERVER] Erro na lista de clientes");
+        }  
+        System.out.println("[SERVER] Enviado para o Cliente: " + respostaSaude + "\n");
+        return respostaSaude;
 
     }
+    private String iniciarChatSaude(String paciente, String saude) {
+        PrintWriter outputTemp;
+        BufferedReader inputTemp;
+        int aux1 = 0, aux2 = 0;
+        
+        JSONObject response = new JSONObject();
+        response.put("cod", "72");
+        response.put("usuario", saude);
+        response.put("sucesso", "false");
+        
+        JSONObject requestSaude = new JSONObject();
+        requestSaude.put("cod", "70");
+        requestSaude.put("usuario", paciente);
+        
+        for (int i = 0; i < clientes.size(); i++) {
+            if(saude.equals(clientes.get(i).getNome()) && aux1 == 0){
+                for (int j = 0; j < socks.size(); j++) {
+                    if(clientes.get(i).getPorta() ==  socks.get(j).getPort() && aux2 == 0){
+                        try {
+                            outputTemp = new PrintWriter(socks.get(j).getOutputStream());
+                            inputTemp = new BufferedReader(new InputStreamReader(socks.get(j).getInputStream()));
+                            
+                            outputTemp.println(requestSaude.toString());
+                            outputTemp.flush();
+                            
+                            String reponseSaude = inputTemp.readLine();
+                            JSONObject jsonSaude = new JSONObject(reponseSaude);
+                            
+                            if("71".equals(jsonSaude.getString("cod"))){
+                                response.put("sucesso", jsonSaude.getString("sucesso"));
+                            }else{
+                                System.out.println("[SERVER] Erro ao receber confirmação saude=>servidor codigo da mensagem inválido");
+                                response.put("sucesso", "false");
+                            }
+                            outputTemp.close();
+                            inputTemp.close();
+                            
+                        } catch (IOException ex) {
+                            System.out.println("[SERVER] Erro ao enviar requisição de chat para saúde");
+                            response.put("sucesso", "false");
+                        }
+                        aux2++;
+                    }
+                }
+                aux1++;
+            }
+        }
+        if(clientes.size()<=0){
+            System.out.println("[SERVER] Erro na lista de clientes");
+            response.put("sucesso", "false");
+        }
+        
+        System.out.println("[SERVER] Resposta saude: " + response + "\n");
+        return response.toString();
+    }
+    
     
 
     private String confirmarLogin(JSONObject dados) {
-        JSONObject request = dados;
+        JSONObject response = new JSONObject();
+        response.put("cod", "11");
+        response.put("success", "true");
         
         c.setNome(dados.getString("usuario"));
         c.setIpcliente(clientSocket.getInetAddress().toString());
         c.setPorta(clientSocket.getPort());
-        c.setTipo("usuario");
+        
+        if(null == dados.getString("usuario")){
+            response.put("tipo", "");
+            response.put("success", "false");
+            c.setTipo("admin");
+        }else switch (dados.getString("usuario")) {
+            case "usuario":
+                response.put("tipo", "usuario");
+                c.setTipo("usuario");
+                break;
+            case "saude":
+                response.put("tipo", "saude");
+                c.setTipo("saude");
+                break;
+            default:
+                response.put("tipo", "admin");
+                c.setTipo("admin");
+                break;
+        }
         
         clientes.add(c);
+        socks.add(clientSocket);
         System.out.println("[SERVER] Lista de Clientes: "+clientes.toString()+"\n");
-        
-        JSONObject response = new JSONObject();
-
-        response.put("cod", "11");
-        response.put("tipo", "usuario");
-        response.put("success", "true");
-
         System.out.println("[SERVER] Enviado para o Cliente: " + response + "\n");
         
         return response.toString();

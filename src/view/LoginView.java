@@ -172,8 +172,9 @@ public class LoginView extends javax.swing.JFrame {
                     this.dispose();
                     break;
                 case "saude":
-                    ChatView c = new ChatView();
-                    c.setVisible(true);
+                    ChatView c = new ChatView(cc, usuario);
+                    c.setVisible(conectou);
+                    this.dispose();
                     break;
                 case "admin":
                     break;
