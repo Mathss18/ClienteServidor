@@ -12,6 +12,8 @@ import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import model.Cliente;
+import model.Hospital;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -19,8 +21,13 @@ public class ServidorController extends Thread {
 
     private ServerSocket serverSocket;
     private Socket clientSocket;
-    private static ArrayList<Socket> clientes;
-
+    private static ArrayList<Cliente> clientes;
+    private Cliente c = new Cliente();
+    
+    private static ArrayList<Hospital> hospitais = new ArrayList<>();
+    private Hospital h1 = new Hospital("nome","rua numero bairro",11);
+    private Hospital h2 = new Hospital("nome2","rua numero bairro2",12);
+   
     //Variaveis de Comunicação
     private PrintWriter output;
     private BufferedReader input;
@@ -43,11 +50,7 @@ public class ServidorController extends Thread {
     public void run() {
         try {
             output = new PrintWriter(clientSocket.getOutputStream());
-
-            //Adiciona no array de clientes
-            clientes.add(clientSocket);
-            System.out.println("[SERVER] Lista de Clientes: "+clientes+"\n");
-
+            
             //O que o Servidor recebe do cliente
             while ((request = input.readLine()) != null) {
                 System.out.println("[SERVER] Recebido do Cliente: " + request + "\n");
@@ -58,13 +61,14 @@ public class ServidorController extends Thread {
             }
 
         } catch (Exception e) {
-            System.out.println("[SERVER] Thread Fechada.");
-
+            System.out.println("[SERVER] Thread do cliente Fechada.");
+            clientes.remove(c);
         }
     }
 
     public void abrirServidor(int porta, JTable tabelaIp) {
-        
+        hospitais.add(h1);
+        hospitais.add(h2);
         try {
             //Cria os objetos necessário para instânciar o servidor
             serverSocket = new ServerSocket(porta);
@@ -104,15 +108,62 @@ public class ServidorController extends Thread {
                 break;
             case "6":
                 return probabilidadeCovid(jsonObj);
+            case "91":
+                return enviarHospitais();
+            case "92":
+                return escolhaChat(jsonObj);
             default:
                 break;
 
         }
         return null;
     }
+    
+    private String enviarHospitais(){
+        JSONObject response = new JSONObject();
+        response.put("cod", "10");
+        
+        for (int i = 0; i < hospitais.size(); i++) {
+            JSONObject hospital = new JSONObject();
+            hospital.put("nome", hospitais.get(i).getNome());
+            hospital.put("endereco", hospitais.get(i).getEndereco());
+            hospital.put("vagas", hospitais.get(i).getVagas());
+            response.append("hospitais",hospital);
+        }
+
+        System.out.println("[SERVER] Enviado para o Cliente: " + response + "\n");
+        
+        return response.toString();
+    }
+    
+    private String escolhaChat(JSONObject dados) {
+        JSONObject response = new JSONObject();
+        response.put("cod", "72");
+        response.put("sucesso", "false");
+        
+        for (int i = 0; i < clientes.size(); i++) {
+            if(clientes.get(i).getTipo() == "saude"){
+                //String respostaSaude = iniciarChat(dados.getString("usuario"), clientes.get(i).getNome());
+                break;
+            }
+        }
+        
+        return response.toString();
+
+    }
+    
 
     private String confirmarLogin(JSONObject dados) {
         JSONObject request = dados;
+        
+        c.setNome(dados.getString("usuario"));
+        c.setIpcliente(clientSocket.getInetAddress().toString());
+        c.setPorta(clientSocket.getPort());
+        c.setTipo("usuario");
+        
+        clientes.add(c);
+        System.out.println("[SERVER] Lista de Clientes: "+clientes.toString()+"\n");
+        
         JSONObject response = new JSONObject();
 
         response.put("cod", "11");
@@ -152,7 +203,7 @@ public class ServidorController extends Thread {
 
     private void logout(JSONObject dados) {
         JSONObject request = dados;
-        clientes.remove(clientSocket);
+        clientes.remove(c);
         try {
             input.close();
             output.close();

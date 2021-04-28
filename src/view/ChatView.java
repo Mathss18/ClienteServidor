@@ -291,16 +291,10 @@ public class ChatView extends javax.swing.JFrame {
 
     private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
         String response;
-        try {
-            response = cc.enviarMensagem(txtEnviar.getText());
-            chat.append("Cliente: " + txtEnviar.getText() + "\n");
-            chat.append("Servidor: " + response + "\n");
-            chat.append("--------------------" + "\n");
-        } catch (IOException ex) {
-            Logger.getLogger(ChatView.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-
+        response = cc.enviarMensagem(txtEnviar.getText());
+        chat.append("Cliente: " + txtEnviar.getText() + "\n");
+        chat.append("Servidor: " + response + "\n");
+        chat.append("--------------------" + "\n");
     }//GEN-LAST:event_btnEnviarActionPerformed
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed

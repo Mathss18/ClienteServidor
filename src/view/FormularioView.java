@@ -8,14 +8,17 @@ package view;
 import controller.ClienteController;
 import java.io.IOException;
 import javax.swing.JOptionPane;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class FormularioView extends javax.swing.JFrame {
 
     ClienteController cc;
+    String nomeUser;
 
-    public FormularioView(ClienteController cliente) {
+    public FormularioView(ClienteController cliente, String nome) {
         cc = cliente;
+        nomeUser = nome;
         initComponents();
     }
 
@@ -66,15 +69,15 @@ public class FormularioView extends javax.swing.JFrame {
 
         jLabel7.setText("Esteve em contato com alguém");
 
-        comboFebre.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sim", "Não" }));
+        comboFebre.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sim", "Nao" }));
 
-        comboTosse.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sim", "Não" }));
+        comboTosse.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sim", "Nao" }));
 
-        comboRespirar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sim", "Não" }));
+        comboRespirar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sim", "Nao" }));
 
-        comboIsolamento.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sim", "Não" }));
+        comboIsolamento.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sim", "Nao" }));
 
-        comboContato.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sim", "Não" }));
+        comboContato.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sim", "Nao" }));
 
         jLabel8.setText("que apresentou sintomas?");
 
@@ -174,7 +177,9 @@ public class FormularioView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEnviarRespostasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarRespostasActionPerformed
-        // TODO add your handling code here:
+        JSONObject envioLista = new JSONObject();
+        JSONObject envioChat = new JSONObject();
+        // resqueste envio do formulario
         JSONObject requestJson = new JSONObject();
         JSONObject resposta1 = new JSONObject();
         JSONObject resposta2 = new JSONObject();
@@ -219,42 +224,68 @@ public class FormularioView extends javax.swing.JFrame {
         requestJson.append("respostas", resposta5);
         requestJson.append("respostas", resposta6);
 
-        try {
-            response = cc.enviarMensagem(requestJson.toString());
+        response = cc.enviarMensagem(requestJson.toString());
+            
+        if (!response.equals("null")) {
+            responseJson = new JSONObject(response);
+            
+            //tratamento caso covid true
+            if (responseJson.getString("covid").equals("true")) {
+                String[] options = {"Chat com Medico", "Ver lista de hospitais"};
 
-            if (!response.equals("null")) {
-                responseJson = new JSONObject(response);
-
-                if (responseJson.getString("covid").equals("true")) {
-                    String[] options = {"Chat com Medico", "Ver lista de hospitais"};
-
-                    int option = JOptionPane.showOptionDialog(null, "A probabilidade de você estar com COVID é ALTA, então:",
-                            "O que deseja fazer?",
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-
-                    System.out.println(option);
-                } else {
-                    String[] options = {"Refazer Formulario", "Cancelar"};
-
-                    int option = JOptionPane.showOptionDialog(null, "A probabilidade de você estar com COVID é BAIXA, então:",
-                            "O que deseja fazer?",
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-
-                    System.out.println(option);
-                }
-            }
-            else{
-                String[] options = {"Tentar Novamente", "Cancelar"};
-
-                    int option = JOptionPane.showOptionDialog(null, "Falha ao se comunicar com o servidor!",
-                            "O que deseja fazer?",
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-
-                    System.out.println(option);
-            }
+                int option = JOptionPane.showOptionDialog(null, "A probabilidade de voce estar com COVID E ALTA, entao:",
+                        "O que deseja fazer?",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
                 
-        } catch (IOException ex) {
-            System.err.println("[CLIENTE] Falha ao enviar ou receber resposta do servidor");
+                //tratamento caso escolha lista
+                if(option ==  1){
+                    envioLista.put("cod", "91");
+                    response = cc.enviarMensagem(envioLista.toString());
+                    String listaHospitais = "O servidor não enviou a lista dos hospitais";
+                    
+                    if (!response.equals("null")) {
+                        JSONObject hospitais = new JSONObject(response);
+                        JSONArray arr = hospitais.getJSONArray("hospitais");
+                        
+                        listaHospitais = "HOSPITAIS\n";
+                        
+                        for (int i = 0; i < arr.length(); i++) {
+                            listaHospitais += "\nnome: "+arr.getJSONObject(i).getString("nome")+
+                                              ", endereco: "+arr.getJSONObject(i).getString("endereco")+
+                                              ", vagas: "+arr.getJSONObject(i).getInt("vagas")+
+                                              "\n";
+                        }
+                    }
+                                       
+                    JOptionPane.showMessageDialog (null, listaHospitais);
+                } else {
+                    envioChat.put("cod", "92");
+                    envioChat.put("usuario", nomeUser);
+                    
+                    response = cc.enviarMensagem(envioChat.toString());
+                    System.out.println(response);
+                }
+                
+            }
+            //tratamento caso covid false
+            else {
+                String[] options = {"Refazer Formulario", "Cancelar"};
+
+                int option = JOptionPane.showOptionDialog(null, "A probabilidade de voce estar com COVID E BAIXA, entao:",
+                        "O que deseja fazer?",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+
+                System.out.println(option);
+            }
+        }
+        else{
+            String[] options = {"Tentar Novamente", "Cancelar"};
+
+                int option = JOptionPane.showOptionDialog(null, "Falha ao se comunicar com o servidor!",
+                        "O que deseja fazer?",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+
+                System.out.println(option);
         }
 
     }//GEN-LAST:event_btnEnviarRespostasActionPerformed
@@ -266,13 +297,11 @@ public class FormularioView extends javax.swing.JFrame {
         String response; //Não ha resposta do servido para este metodo
 
         requestJson.put("cod", "5");
-        try {
-            cc.enviarMensagem(requestJson.toString());
-            cc.desconectar();
-            this.dispose();
-        } catch (IOException ex) {
-            System.err.println("[CLIENTE] Falha ao enviar ou receber resposta do servidor");
-        }
+        
+        cc.enviarMensagem(requestJson.toString());
+        cc.desconectar();
+        this.dispose();
+   
     }//GEN-LAST:event_btnDeslogarActionPerformed
 
     /**

@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ClienteController {
 
@@ -16,7 +18,7 @@ public class ClienteController {
     private String response;
 
     public boolean conectar(String ip, int porta) {
-        System.out.println("[CLIENTE] Conectando ao servdor...\n");
+        System.out.println("[CLIENTE] Conectando ao servidor...\n");
 
         try {
             //CONECTA CLIENTE AO SERVIDOR - setando as streams
@@ -32,21 +34,25 @@ public class ClienteController {
         return true;
 
     }
-
-    public String enviarMensagem(String msg) throws IOException {
+    
+    public String enviarMensagem(String msg){
         output.println(msg);
         output.flush();
         
-        
         return escutar();
-        
+
     }
 
-    public String escutar() throws IOException {
-        response = input.readLine();
+    public String escutar(){
+        
+        try {
+            response = input.readLine();
+        } catch (IOException ex) {
+           System.err.println("[CLIENTE] Falha ao enviar ou receber resposta do servidor");
+        }
+        
         System.out.println("[CLIENTE] Recebido do Servidor: " + response+"\n");
         return response;
-        
     }
 
     public boolean desconectar() {

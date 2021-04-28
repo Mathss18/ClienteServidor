@@ -14,6 +14,22 @@ public class Cliente {
     private String tipo;
     private String ipcliente;
     private int porta;
+
+    @Override
+    public String toString() {
+        return "Cliente{" + "nome: " + nome + ", tipo: " + tipo + ", ipcliente: " + ipcliente + ", porta: " + porta + '}';
+    }
+
+    public Cliente(String nome, String tipo, String ipcliente, int porta) {
+        this.nome = nome;
+        this.tipo = tipo;
+        this.ipcliente = ipcliente;
+        this.porta = porta;
+    }
+
+    public Cliente() {
+        
+    }
     
 	public String getNome() {
 		return nome;

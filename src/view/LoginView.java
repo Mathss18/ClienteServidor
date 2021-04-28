@@ -160,18 +160,14 @@ public class LoginView extends javax.swing.JFrame {
         boolean conectou = cc.conectar(ip, porta);
 
         if (conectou) {
-            try {
-                response = cc.enviarMensagem(requestJson.toString());
-            } catch (IOException ex) {
-                System.err.println("Falha ao enviar ou receber resposta do servidor");
-            }
+            response = cc.enviarMensagem(requestJson.toString());
 
             responseJson = new JSONObject(response);
             tipo = responseJson.getString("tipo");
 
             switch (tipo) {
                 case "usuario":
-                    FormularioView fv = new FormularioView(cc);
+                    FormularioView fv = new FormularioView(cc, usuario);
                     fv.setVisible(conectou);
                     this.dispose();
                     break;
