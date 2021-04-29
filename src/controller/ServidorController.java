@@ -35,6 +35,8 @@ public class ServidorController extends Thread {
     private PrintWriter output;
     private BufferedReader input;
     private String request;
+    private String userTemp = "";
+    private String saudeTemp = "";
 
     public ServidorController(Socket con) {
         this.clientSocket = con;
@@ -50,11 +52,13 @@ public class ServidorController extends Thread {
 
     }
 
+    @Override
     public void run() {
         try {
             output = new PrintWriter(clientSocket.getOutputStream());
             
             //O que o Servidor recebe do cliente
+            
             while ((request = input.readLine()) != null) {
                 System.out.println("[SERVER] Recebido do Cliente: " + request + "\n");
 
@@ -63,9 +67,9 @@ public class ServidorController extends Thread {
                 output.flush();
             }
 
-        } catch (Exception e) {
-            //Logger.getLogger(ServidorController.class.getName()).log(java.util.logging.Level.SEVERE, null, e);
-            System.out.println("[SERVER] Thread do cliente Fechada.");
+        } catch (IOException e) {
+            Logger.getLogger(ServidorController.class.getName()).log(java.util.logging.Level.SEVERE, null, e);
+            //System.out.println("[SERVER] Thread do cliente Fechada.");
             clientes.remove(c);
         }
     }
@@ -89,14 +93,14 @@ public class ServidorController extends Thread {
                 
             }
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.err.println("[SERVER] Porta já utilizada, tente outra...");
         }
 
     }
 
     private String tratarDados(String dados) {
-        String cod = null;
+        String cod = "";
         
         JSONObject jsonObj = new JSONObject(dados);
 
@@ -116,7 +120,12 @@ public class ServidorController extends Thread {
             case "91":
                 return enviarHospitais();
             case "92":
-                return escolhaChat(jsonObj);
+                escolhaChat(jsonObj);
+                return null;
+            case "71":
+                confirmaChatSaude(jsonObj);
+                return null;
+                
             default:
                 break;
 
@@ -141,71 +150,39 @@ public class ServidorController extends Thread {
         return response.toString();
     }
     
-    private String escolhaChat(JSONObject dados) {
-        String respostaSaude;
-        int aux = 0;
+    private void escolhaChat(JSONObject dados) {
         
-        JSONObject response = new JSONObject();
-        response.put("cod", "72");
-        response.put("sucesso", "false");
-        response.put("usuario", "");
+        userTemp = dados.getString("usuario");
         
-        respostaSaude = response.toString();
-        
-        for (int i = 0; i < clientes.size(); i++) {
-            if("saude".equals(clientes.get(i).getTipo()) && aux == 0){
-                respostaSaude = iniciarChatSaude(dados.getString("usuario"), clientes.get(i).getNome());
-                System.out.println("[SERVER] Resposta iniciar chat: " + respostaSaude + "\n");
-                aux++;
-            }
-        }
-        if(clientes.size()<=0){
-            System.out.println("[SERVER] Erro na lista de clientes");
-        }  
-        System.out.println("[SERVER] Enviado para o Cliente: " + respostaSaude + "\n");
-        return respostaSaude;
-
+        iniciarChatSaude(dados.getString("usuario"));
     }
-    private String iniciarChatSaude(String paciente, String saude) {
-        PrintWriter outputTemp;
-        BufferedReader inputTemp;
-        int aux1 = 0, aux2 = 0;
+    
+    private void iniciarChatSaude(String paciente) {
         
-        JSONObject response = new JSONObject();
-        response.put("cod", "72");
-        response.put("usuario", saude);
-        response.put("sucesso", "false");
+        PrintWriter outputTemp;
+        int aux1 = 0, aux2 = 0;
         
         JSONObject requestSaude = new JSONObject();
         requestSaude.put("cod", "70");
         requestSaude.put("usuario", paciente);
         
         for (int i = 0; i < clientes.size(); i++) {
-            if(saude.equals(clientes.get(i).getNome()) && aux1 == 0){
+            if("saude".equals(clientes.get(i).getTipo()) && aux1 == 0){
+                saudeTemp = clientes.get(i).getNome();
                 for (int j = 0; j < socks.size(); j++) {
                     if(clientes.get(i).getPorta() ==  socks.get(j).getPort() && aux2 == 0){
+                        
                         try {
                             outputTemp = new PrintWriter(socks.get(j).getOutputStream());
-                            inputTemp = new BufferedReader(new InputStreamReader(socks.get(j).getInputStream()));
-                            
+                            System.out.println("[SERVER] Enviado para o Cliente: " + requestSaude + "\n");
                             outputTemp.println(requestSaude.toString());
                             outputTemp.flush();
                             
-                            String reponseSaude = inputTemp.readLine();
-                            JSONObject jsonSaude = new JSONObject(reponseSaude);
-                            
-                            if("71".equals(jsonSaude.getString("cod"))){
-                                response.put("sucesso", jsonSaude.getString("sucesso"));
-                            }else{
-                                System.out.println("[SERVER] Erro ao receber confirmação saude=>servidor codigo da mensagem inválido");
-                                response.put("sucesso", "false");
-                            }
                             outputTemp.close();
-                            inputTemp.close();
                             
                         } catch (IOException ex) {
+                            Logger.getLogger(ServidorController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
                             System.out.println("[SERVER] Erro ao enviar requisição de chat para saúde");
-                            response.put("sucesso", "false");
                         }
                         aux2++;
                     }
@@ -215,13 +192,46 @@ public class ServidorController extends Thread {
         }
         if(clientes.size()<=0){
             System.out.println("[SERVER] Erro na lista de clientes");
-            response.put("sucesso", "false");
         }
-        
-        System.out.println("[SERVER] Resposta saude: " + response + "\n");
-        return response.toString();
     }
     
+    private void confirmaChatSaude(JSONObject dados) {
+        confirmaChatUsuario(dados.getString("sucesso"));
+    }
+    
+    private void confirmaChatUsuario(String sucesso) {
+        PrintWriter outputTemp;
+        int aux1 = 0, aux2 = 0;
+        
+        JSONObject requestUser = new JSONObject();
+        requestUser.put("cod", "72");
+        requestUser.put("sucesso", sucesso);
+        requestUser.put("usuario", saudeTemp);
+        
+        
+        for (int i = 0; i < clientes.size(); i++) {
+            if(userTemp.equals(clientes.get(i).getNome()) && aux1 == 0){
+                for (int j = 0; j < socks.size(); j++) {
+                    if(clientes.get(i).getPorta() ==  socks.get(j).getPort() && aux2 == 0){
+                        try {
+                            outputTemp = new PrintWriter(socks.get(j).getOutputStream());
+                           System.out.println("[SERVER] Enviado para o Cliente: " + requestUser + "\n");                         
+                            outputTemp.println(requestUser.toString());
+                            outputTemp.flush();
+                            
+                            outputTemp.close();
+                            
+                        } catch (IOException ex) {
+                            Logger.getLogger(ServidorController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+                            System.out.println("[SERVER] Erro ao enviar requisição de chat para saúde");
+                        }
+                        aux2++;
+                    }
+                }
+                aux1++;
+            }
+        }
+    }
     
 
     private String confirmarLogin(JSONObject dados) {

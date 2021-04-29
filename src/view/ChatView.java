@@ -199,7 +199,7 @@ public class ChatView extends javax.swing.JFrame {
             pacienteUser = jsonEspera.getString("usuario");
             response.put("sucesso", "true");
         }
-        cc.enviarSemEscuta(response.toString());
+        cc.enviarMensagem(response.toString());
     }//GEN-LAST:event_btnAguardarChatActionPerformed
 
     /**
