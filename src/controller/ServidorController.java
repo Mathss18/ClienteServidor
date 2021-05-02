@@ -68,8 +68,8 @@ public class ServidorController extends Thread {
             }
 
         } catch (IOException e) {
-            Logger.getLogger(ServidorController.class.getName()).log(java.util.logging.Level.SEVERE, null, e);
-            //System.out.println("[SERVER] Thread do cliente Fechada.");
+            //Logger.getLogger(ServidorController.class.getName()).log(java.util.logging.Level.SEVERE, null, e);
+            System.out.println("[SERVER] Thread do cliente Fechada.");
             clientes.remove(c);
         }
     }
@@ -154,7 +154,7 @@ public class ServidorController extends Thread {
         
         userTemp = dados.getString("usuario");
         
-        iniciarChatSaude(dados.getString("usuario"));
+        iniciarChatSaude(userTemp);
     }
     
     private void iniciarChatSaude(String paciente) {
@@ -181,7 +181,7 @@ public class ServidorController extends Thread {
                             outputTemp.close();
                             
                         } catch (IOException ex) {
-                            Logger.getLogger(ServidorController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+                            //Logger.getLogger(ServidorController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
                             System.out.println("[SERVER] Erro ao enviar requisição de chat para saúde");
                         }
                         aux2++;
