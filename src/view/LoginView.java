@@ -172,7 +172,7 @@ public class LoginView extends javax.swing.JFrame {
                     this.dispose();
                     break;
                 case "saude":
-                    ChatView c = new ChatView(cc, usuario);
+                    ChatSaudeView c = new ChatSaudeView(cc, usuario);
                     c.setVisible(conectou);
                     this.dispose();
                     break;
