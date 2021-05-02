@@ -12,7 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class FormularioView extends javax.swing.JFrame {
-
+    ChatPacienteView c;
     ClienteController cc;
     String nomeUser;
 
@@ -261,9 +261,14 @@ public class FormularioView extends javax.swing.JFrame {
                 } else {
                     envioChat.put("cod", "92");
                     envioChat.put("usuario", nomeUser);
-                    
-                    response = cc.enviarMensagem(envioChat.toString());
-                    System.out.println(response);
+                    cc.enviarMensagem(envioChat.toString());
+                    response = cc.escutar();
+                    JSONObject jsonResp = new JSONObject(response);
+                    if("72".equals(jsonResp.getString("cod")) && "true".equals(jsonResp.getString("sucesso"))){
+                        c = new ChatPacienteView(cc, jsonResp.getString("usuario"), nomeUser);
+                        c.setVisible(true);
+                        this.dispose();
+                    }
                 }
                 
             }

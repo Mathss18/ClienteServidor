@@ -16,20 +16,20 @@ import org.json.JSONObject;
  *
  * @author Maths
  */
-public class ChatView extends javax.swing.JFrame {
+public class ChatSaudeView extends javax.swing.JFrame {
 
     ClienteController cc = new ClienteController();
     String saudeUser;
     String pacienteUser;
-    String esperaChat;
     private String[] reqResp = new String[2];
+    boolean encerrar;
 
-    public ChatView(ClienteController cliente, String nome) {
+    public ChatSaudeView(ClienteController cliente, String nome) {
         cc = cliente;
         saudeUser = nome;
         initComponents();
     }
-    public ChatView() {
+    public ChatSaudeView() {
         initComponents();
     }
 
@@ -45,7 +45,7 @@ public class ChatView extends javax.swing.JFrame {
         jSeparator2 = new javax.swing.JSeparator();
         jPanel7 = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
-        ipCliente = new javax.swing.JTextField();
+        nomePaciente = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         btnAguardarChat = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
@@ -57,9 +57,10 @@ public class ChatView extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        ipCliente.addActionListener(new java.awt.event.ActionListener() {
+        nomePaciente.setEditable(false);
+        nomePaciente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ipClienteActionPerformed(evt);
+                nomePacienteActionPerformed(evt);
             }
         });
 
@@ -81,7 +82,7 @@ public class ChatView extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(ipCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(nomePaciente, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnAguardarChat)
                 .addContainerGap())
@@ -91,7 +92,7 @@ public class ChatView extends javax.swing.JFrame {
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ipCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nomePaciente, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
                     .addComponent(btnAguardarChat))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -110,7 +111,6 @@ public class ChatView extends javax.swing.JFrame {
         });
 
         btnEnviar.setText("Enviar");
-        btnEnviar.setEnabled(false);
         btnEnviar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEnviarActionPerformed(evt);
@@ -175,9 +175,16 @@ public class ChatView extends javax.swing.JFrame {
 
     private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
         String response;
-        response = cc.enviarMensagem(txtEnviar.getText());
-        chat.append("Cliente: " + txtEnviar.getText() + "\n");
-        chat.append("Servidor: " + response + "\n");
+        
+        JSONObject request = new JSONObject();
+        request.put("cod", "73");
+        request.put("destino", pacienteUser);
+        request.put("msg", txtEnviar.getText());
+        response = cc.enviarMensagem(request.toString());
+        response = cc.escutar();
+        JSONObject jsonResponse = new JSONObject(response);
+        chat.append("Saude: " + txtEnviar.getText() + "\n");
+        chat.append("Paciente: " + jsonResponse.getString("msg") + "\n");
         chat.append("--------------------" + "\n");
     }//GEN-LAST:event_btnEnviarActionPerformed
 
@@ -185,21 +192,43 @@ public class ChatView extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtEnviarActionPerformed
 
-    private void ipClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ipClienteActionPerformed
+    private void nomePacienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nomePacienteActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_ipClienteActionPerformed
+    }//GEN-LAST:event_nomePacienteActionPerformed
 
     private void btnAguardarChatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAguardarChatActionPerformed
-        JSONObject response = new JSONObject();
-        response.put("cod", "71");
-        response.put("sucesso", "false");
-        esperaChat = cc.escutar();
-        JSONObject jsonEspera = new JSONObject(esperaChat);
-        if("70".equals(jsonEspera.getString("cod"))){
-            pacienteUser = jsonEspera.getString("usuario");
-            response.put("sucesso", "true");
+        if(encerrar){
+            JSONObject request = new JSONObject();
+            request.put("cod", "75");
+            cc.enviarMensagem(request.toString());
+            String esperaEncerrar = cc.escutar();
+            JSONObject jsonEspera = new JSONObject(esperaEncerrar);
+            if("76".equals(jsonEspera.getString("cod"))){
+                if("true".equals(jsonEspera.getString("sucesso"))){
+                    pacienteUser = "";
+                    nomePaciente.setText(pacienteUser);
+                    System.out.println("[SAUDE] Chat encerrado com sucesso");
+                }
+            }else{
+                System.out.println("[SAUDE] Codigo diferente de 76 ao encerrar chat");
+            }
+            btnAguardarChat.setText("Aguardar chat");
+            encerrar = false;
+        }else{
+           JSONObject response = new JSONObject();
+            response.put("cod", "71");
+            response.put("sucesso", "false");
+            String esperaChat = cc.escutar();
+            JSONObject jsonEspera = new JSONObject(esperaChat);
+            if("70".equals(jsonEspera.getString("cod"))){
+                pacienteUser = jsonEspera.getString("usuario");
+                nomePaciente.setText(pacienteUser);
+                response.put("sucesso", "true");
+            }
+            cc.enviarMensagem(response.toString());
+            btnAguardarChat.setText("Encerrar chat");
+            encerrar = true; 
         }
-        cc.enviarMensagem(response.toString());
     }//GEN-LAST:event_btnAguardarChatActionPerformed
 
     /**
@@ -219,21 +248,23 @@ public class ChatView extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ChatView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ChatSaudeView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ChatView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ChatSaudeView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ChatView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ChatSaudeView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ChatView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ChatSaudeView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ChatView().setVisible(true);
+                new ChatSaudeView().setVisible(true);
             }
         });
     }
@@ -242,7 +273,6 @@ public class ChatView extends javax.swing.JFrame {
     private javax.swing.JButton btnAguardarChat;
     private javax.swing.JButton btnEnviar;
     private javax.swing.JTextArea chat;
-    private javax.swing.JTextField ipCliente;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel7;
@@ -250,6 +280,7 @@ public class ChatView extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JTextField nomePaciente;
     private javax.swing.JTextField txtEnviar;
     // End of variables declaration//GEN-END:variables
 
