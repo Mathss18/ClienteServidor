@@ -22,10 +22,12 @@ public class ChatSaudeController extends Thread {
     public String pacienteUser;
     String retorno;
     String cod = "";
+    ChatSaudeView view;
     // construtor que recebe o socket do cliente
-    public ChatSaudeController(ClienteController cc, String saude) {
+    public ChatSaudeController(ClienteController cc, String saude, ChatSaudeView view) {
         this.conexao = cc;
         this.saudeUser = saude;
+        this.view = view;
     }
 
     public ChatSaudeController() {
@@ -34,14 +36,13 @@ public class ChatSaudeController extends Thread {
     
     public void principal()
     {
-        Thread thread = new ChatSaudeController(conexao, saudeUser);
+        Thread thread = new ChatSaudeController(conexao, saudeUser, view);
         thread.start();
     }
     // execução da thread
     @Override
     public void run()
     {
-        String msg;
         while (true){
             retorno = tratarDados(conexao.escutar());
             if(!"fn".equals(retorno)){
@@ -77,9 +78,10 @@ public class ChatSaudeController extends Thread {
         JSONObject response = new JSONObject();
         response.put("cod", "71");
         response.put("sucesso", "false");
-        //recebe nome paciente aqui
+        
         if("70".equals(dados.getString("cod"))){
             pacienteUser = dados.getString("usuario");
+            this.view.nomePaciente.setText(pacienteUser);
             System.out.println("[SAUDE] Nome paciente: "+pacienteUser);
             response.put("sucesso", "true");
         }else{
@@ -92,7 +94,7 @@ public class ChatSaudeController extends Thread {
     public void recebeMensagem(JSONObject dados){
                 
         if("74".equals(dados.getString("cod"))){
-            //view.chat.append(dados.getString("origem")+": " + dados.getString("msg") + "\n");
+            this.view.chat.append(dados.getString("origem")+": " + dados.getString("msg") + "\n");
             System.out.println("[RECEBEU] "+dados.getString("origem")+": "+dados.getString("msg"));
         }else{
             System.out.println("[SAUDE] Codigo diferente de 74 ao receber mensagem");

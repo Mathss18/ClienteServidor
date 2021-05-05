@@ -8,9 +8,6 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import model.Chat;
@@ -117,11 +114,8 @@ public class ServidorController extends Thread {
         switch (cod) {
             case "1":
                 return confirmarLogin(jsonObj);
-            case "3":
-                break;
             case "5":
-                logout(jsonObj);
-                break;
+                return logout(jsonObj);
             case "6":
                 return probabilidadeCovid(jsonObj);
             case "91":
@@ -331,19 +325,24 @@ public class ServidorController extends Thread {
         return response.toString();
     }
 
-    private void logout(JSONObject dados) {
-        JSONObject request = dados;
+    private String logout(JSONObject dados) {
+        
+        JSONObject response = new JSONObject();
+        response.put("cod", "200");
+        response.put("success", "true");
+        response.put("sucesso", "true");
+        
+        
         clientes.remove(c);
-        try {
-            input.close();
-            output.close();
-            clientSocket.close();
-            
-        } catch (IOException ex) {
-            System.err.println("[SERVER] Impossivel Desconectar Cliente\n");
-        }
+        socks.remove(clientSocket);
+        //input.close();
+        //output.close();
+        //clientSocket.close();
+        
+
         System.out.println("[SERVER] Lista de Clientes: "+clientes+"\n");
         System.out.println("[SERVER] Cliente Desconectado\n");
+        return response.toString();
     }
     
     private OutputStream encontraSocket(String usuario){

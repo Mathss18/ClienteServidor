@@ -303,7 +303,7 @@ public class FormularioView extends javax.swing.JFrame {
         requestJson.put("cod", "5");
         
         cc.enviarMensagem(requestJson.toString());
-        cc.desconectar();
+        cc.logout();
         this.dispose();
    
     }//GEN-LAST:event_btnDeslogarActionPerformed

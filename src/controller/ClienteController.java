@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.json.JSONObject;
 
 public class ClienteController {
 
@@ -62,19 +63,24 @@ public class ClienteController {
         System.out.println("[CLIENTE] Recebido do Servidor: " +response+"\n");
         return response;
     }
-
-    public boolean desconectar() {
-        try {
+    
+    public void logout() {
+        
+        JSONObject request = new JSONObject();
+        request.put("cod", "5");
+        JSONObject response = new JSONObject(this.enviarMensagem(request.toString()));
+        if("true".equals(response.getString("success"))){
+            try {
             output.close();
             input.close();
             clientSocket.close();
 
         } catch (IOException e) {
             System.out.println("[CLIENTE] Nao foi possivel desconectar\n");
-            return false;
         }
+        }
+        
         System.out.println("[CLIENTE] Cliente desconectado\n");
-        return true;
 
     }
 }

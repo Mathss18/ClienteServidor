@@ -5,6 +5,7 @@
  */
 package controller;
 
+import javax.swing.JTextArea;
 import org.json.JSONObject;
 import view.ChatPacienteView;
 
@@ -17,14 +18,16 @@ public class ChatPacienteController extends Thread {
     // parte que controla a recepção de mensagens do cliente
     private ClienteController conexao;
     public String saudeUser;
+    public ChatPacienteView view;
     String pacienteUser;
     String retorno;
     String cod = "";
     // construtor que recebe o socket do cliente
-    public ChatPacienteController(ClienteController cc, String saude, String paciente) {
+    public ChatPacienteController(ClienteController cc, String saude, String paciente, ChatPacienteView view) {
         this.conexao = cc;
         this.saudeUser = saude;
         this.pacienteUser = paciente;
+        this.view = view;
     }
 
     public ChatPacienteController() {
@@ -33,14 +36,13 @@ public class ChatPacienteController extends Thread {
     
     public void principal()
     {
-        Thread thread = new ChatPacienteController(conexao, saudeUser, pacienteUser);
+        Thread thread = new ChatPacienteController(conexao, saudeUser, pacienteUser, view);
         thread.start();
     }
     // execução da thread
     @Override
     public void run()
     {
-        String msg;
         while (true){
             retorno = tratarDados(conexao.escutar());
             if(!"fn".equals(retorno)){
@@ -74,7 +76,7 @@ public class ChatPacienteController extends Thread {
     public void recebeMensagem(JSONObject dados){
                 
         if("74".equals(dados.getString("cod"))){
-            //view.EscreveMensagem(dados.getString("origem"), dados.getString("msg"));
+            this.view.chat.append(dados.getString("origem")+": " + dados.getString("msg") + "\n");
             System.out.println("[RECEBEU] "+dados.getString("origem")+": "+dados.getString("msg"));
         }else{
             System.out.println("[PACIENTE] Codigo diferente de 74 ao receber mensagem");
@@ -89,6 +91,8 @@ public class ChatPacienteController extends Thread {
         if("77".equals(dados.getString("cod"))){
             request.put("sucesso", "true");
             conexao.enviarSemEscuta(request.toString());
+            this.conexao.logout();
+            this.view.dispose();
             System.out.println("[PACIENTE] Chat encerrado com sucesso");
             
         }else{
