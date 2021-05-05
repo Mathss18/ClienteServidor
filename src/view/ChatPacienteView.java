@@ -1,5 +1,6 @@
 package view;
 
+import controller.ChatPacienteController;
 import controller.ClienteController;
 import java.awt.Color;
 import java.io.IOException;
@@ -19,25 +20,16 @@ import org.json.JSONObject;
 public class ChatPacienteView extends javax.swing.JFrame {
 
     ClienteController cc = new ClienteController();
-    String saudeUser;
-    String pacienteUser;
-    String esperaChat;
+    ChatPacienteController chatctrl;
     private String[] reqResp = new String[2];
 
     public ChatPacienteView(ClienteController cliente, String nomeSaude, String nomePaciente) {
-        cc = cliente;
-        saudeUser = nomeSaude;
-        pacienteUser = nomePaciente;
+        
         initComponents();
-        inputNomeSaude.setText(nomeSaude);
-        
-        String response;
-        response = cc.escutar();
-        JSONObject jsonResponse = new JSONObject(response);
-        chat.append("Paciente: " + txtEnviar.getText() + "\n");
-        chat.append("Saude : " + jsonResponse.getString("msg") + "\n");
-        chat.append("--------------------" + "\n");
-        
+        cc = cliente;
+        chatctrl = new ChatPacienteController(cliente, nomeSaude, nomePaciente);
+        chatctrl.principal();
+        inputNomeSaude.setText(nomeSaude);        
     }
     public ChatPacienteView() {
         initComponents();
@@ -57,7 +49,6 @@ public class ChatPacienteView extends javax.swing.JFrame {
         jPanel8 = new javax.swing.JPanel();
         inputNomeSaude = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        btnEncerrar = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         jScrollPane2 = new javax.swing.JScrollPane();
         chat = new javax.swing.JTextArea();
@@ -76,13 +67,6 @@ public class ChatPacienteView extends javax.swing.JFrame {
 
         jLabel5.setText("Conversando com:");
 
-        btnEncerrar.setText("Encerrar chat");
-        btnEncerrar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEncerrarActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
@@ -92,9 +76,7 @@ public class ChatPacienteView extends javax.swing.JFrame {
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(inputNomeSaude, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnEncerrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -102,8 +84,7 @@ public class ChatPacienteView extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(inputNomeSaude, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)
-                    .addComponent(btnEncerrar))
+                    .addComponent(jLabel5))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -166,9 +147,7 @@ public class ChatPacienteView extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -179,18 +158,17 @@ public class ChatPacienteView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
-        String response;
-        
+              
         JSONObject request = new JSONObject();
         request.put("cod", "73");
-        request.put("destino", saudeUser);
+        request.put("destino", "saude");
         request.put("msg", txtEnviar.getText());
-        response = cc.enviarMensagem(request.toString());
-        response = cc.escutar();
-        JSONObject jsonResponse = new JSONObject(response);
-        chat.append("Paciente: " + txtEnviar.getText() + "\n");
-        chat.append("Saude : " + jsonResponse.getString("msg") + "\n");
-        chat.append("--------------------" + "\n");
+        cc.enviarSemEscuta(request.toString());
+//        response = cc.escutar();
+//        JSONObject jsonResponse = new JSONObject(response);
+//        chat.append("Paciente: " + txtEnviar.getText() + "\n");
+//        chat.append("Saude : " + jsonResponse.getString("msg") + "\n");
+//        chat.append("--------------------" + "\n");
     }//GEN-LAST:event_btnEnviarActionPerformed
 
     private void txtEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEnviarActionPerformed
@@ -200,23 +178,6 @@ public class ChatPacienteView extends javax.swing.JFrame {
     private void inputNomeSaudeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputNomeSaudeActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_inputNomeSaudeActionPerformed
-
-    private void btnEncerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEncerrarActionPerformed
-        // TODO add your handling code here:
-        
-        JSONObject request = new JSONObject();
-        request.put("cod", "78");
-        request.put("sucesso", "false");
-        
-        String response = cc.escutar();
-        
-        JSONObject jsonEncerra = new JSONObject(response);
-        if("77".equals(jsonEncerra.getString("cod"))){
-            request.put("sucesso", "true");
-        }
-        cc.enviarMensagem(request.toString());
-        this.dispose();
-    }//GEN-LAST:event_btnEncerrarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -261,7 +222,6 @@ public class ChatPacienteView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnEncerrar;
     private javax.swing.JButton btnEnviar;
     private javax.swing.JTextArea chat;
     private javax.swing.JTextField inputNomeSaude;

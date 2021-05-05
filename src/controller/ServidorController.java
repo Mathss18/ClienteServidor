@@ -3,6 +3,7 @@ package controller;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -38,6 +39,7 @@ public class ServidorController extends Thread {
     private static String userTemp = "";
     private static String saudeTemp = "";
     PrintWriter outputTemp;
+    String retorno;
 
     public ServidorController(Socket con) {
         this.clientSocket = con;
@@ -64,8 +66,12 @@ public class ServidorController extends Thread {
                 System.out.println("[SERVER] Recebido do Cliente: " + request + "\n");
 
                 //O que o Servidor responde para o  cliente
-                output.println(tratarDados(request));
-                output.flush();
+                retorno = tratarDados(request);
+                if(!"fn".equals(retorno)){
+                   output.println(retorno);
+                   output.flush(); 
+                }
+                
             }
 
         } catch (IOException e) {
@@ -122,19 +128,19 @@ public class ServidorController extends Thread {
                 return enviarHospitais();
             case "92":
                 escolhaChat(jsonObj);
-                return null;
+                return "fn";
             case "71":
                 confirmaChatSaude(jsonObj);
-                return null;
+                return "fn";
             case "75":
                 confirmaEncerraChatSaude(jsonObj);
-                return null;
+                return "fn";
             case "78":
                 confirmaEncerraChatPaciente(jsonObj);
-                return null;
+                return "fn";
             case "73":
                 redirecionaMensagem(jsonObj);
-                return "{\"msg\":\"batata\",\"cod\":\"73\",\"destino\":\"usuario\"}\n";
+                return "fn";
                 
             default:
                 break;
@@ -213,116 +219,56 @@ public class ServidorController extends Thread {
         requestUser.put("sucesso", dados.getString("sucesso"));
         requestUser.put("usuario", saudeTemp);
         
-        for (int i = 0; i < clientes.size(); i++) {
-            if(userTemp.equals(clientes.get(i).getNome()) && aux1 == 0){
-                for (int j = 0; j < socks.size(); j++) {
-                    if(clientes.get(i).getPorta() ==  socks.get(j).getPort() && aux2 == 0){
-                        try {
-                            outputTemp = new PrintWriter(socks.get(j).getOutputStream());
-                            System.out.println("[SERVER] Enviado para o Cliente: " + requestUser + "\n");                         
-                            outputTemp.println(requestUser.toString());
-                            outputTemp.flush();
-                            
-                        } catch (IOException ex) {
-                            Logger.getLogger(ServidorController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-                            System.out.println("[SERVER] Erro ao enviar requisição de chat para saúde");
-                        }
-                        aux2++;
-                    }
-                }
-                aux1++;
-            }
-        }
+        outputTemp = new PrintWriter(encontraSocket(userTemp));
+        outputTemp.println(requestUser.toString());
+        outputTemp.flush();
+        System.out.println("[SERVER] Enviado para o Cliente: " + requestUser + "\n");
     }
     
     private void confirmaEncerraChatSaude(JSONObject dados){
-        int aux1 = 0, aux2 = 0;
         
         JSONObject requestUser = new JSONObject();
         requestUser.put("cod", "77");
         
-        for (int i = 0; i < clientes.size(); i++) {
-            if(userTemp.equals(clientes.get(i).getNome()) && aux1 == 0){
-                for (int j = 0; j < socks.size(); j++) {
-                    if(clientes.get(i).getPorta() ==  socks.get(j).getPort() && aux2 == 0){
-                        try {
-                            outputTemp = new PrintWriter(socks.get(j).getOutputStream());
-                            System.out.println("[SERVER] Enviado para o Cliente: " + requestUser + "\n");                         
-                            outputTemp.println(requestUser.toString());
-                            outputTemp.flush();
-                            
-                        } catch (IOException ex) {
-                            Logger.getLogger(ServidorController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-                            System.out.println("[SERVER] Erro ao enviar requisição de encerramento de chat para paciente");
-                        }
-                        aux2++;
-                    }
-                }
-                aux1++;
-            }
-        }
+        outputTemp = new PrintWriter(encontraSocket(userTemp));
+        outputTemp.println(requestUser.toString());
+        outputTemp.flush();
+        System.out.println("[SERVER] Enviado para o Cliente: " + requestUser + "\n");
     }
     
     private void confirmaEncerraChatPaciente(JSONObject dados){
-        int aux1 = 0, aux2 = 0;
         
         JSONObject requestUser = new JSONObject();
         requestUser.put("cod", "76");
         requestUser.put("sucesso", "true");
         
-        for (int i = 0; i < clientes.size(); i++) {
-            if(saudeTemp.equals(clientes.get(i).getNome()) && aux1 == 0){
-                for (int j = 0; j < socks.size(); j++) {
-                    if(clientes.get(i).getPorta() ==  socks.get(j).getPort() && aux2 == 0){
-                        try {
-                            outputTemp = new PrintWriter(socks.get(j).getOutputStream());
-                            System.out.println("[SERVER] Enviado para o Cliente: " + requestUser + "\n");                         
-                            outputTemp.println(requestUser.toString());
-                            outputTemp.flush();
-                            
-                        } catch (IOException ex) {
-                            Logger.getLogger(ServidorController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-                            System.out.println("[SERVER] Erro ao enviar confirmação de encerramento de chat para saúde");
-                        }
-                        aux2++;
-                    }
-                }
-                aux1++;
-            }
-        }
+        outputTemp = new PrintWriter(encontraSocket(saudeTemp));                       
+        outputTemp.println(requestUser.toString());
+        outputTemp.flush();
+        System.out.println("[SERVER] Enviado para o Cliente: " + requestUser + "\n");
+                          
     }
     
     private void redirecionaMensagem(JSONObject dados){
-        int aux1 = 0, aux2 = 0;
+        String origem = "undefined";
         
         JSONObject requestUser = new JSONObject();
         requestUser.put("cod", "74");
-        requestUser.put("origem", dados.getString("destino"));
+        
+        origem = nomeConexaoAtual();
+        
+        requestUser.put("origem", origem);
         requestUser.put("msg", dados.getString("msg"));
         
         String destino = dados.getString("destino");
-        for (int i = 0; i < clientes.size(); i++) {
-            if(destino.equals(clientes.get(i).getNome()) && aux1 == 0){
-                for (int j = 0; j < socks.size(); j++) {
-                    if(clientes.get(i).getPorta() ==  socks.get(j).getPort() && aux2 == 0){
-                        try {
-                            outputTemp = new PrintWriter(socks.get(j).getOutputStream());
-                            System.out.println("[SERVER] Enviado para o Cliente: " + requestUser + "\n");                         
-                            outputTemp.println(requestUser.toString());
-                            outputTemp.flush();
-                            
-                        } catch (IOException ex) {
-                            Logger.getLogger(ServidorController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-                            System.out.println("[SERVER] Erro ao redirecionar mensagem para "+destino);
-                        }
-                        aux2++;
-                    }
-                }
-                aux1++;
-            }
-        }
+        
+        outputTemp = new PrintWriter(encontraSocket(destino));
+        outputTemp.println(requestUser.toString());
+        outputTemp.flush();
+        
+        System.out.println("[SERVER] Enviado para o Cliente: " + requestUser + "\n");
     }
-
+    
     private String confirmarLogin(JSONObject dados) {
         JSONObject response = new JSONObject();
         response.put("cod", "11");
@@ -399,6 +345,38 @@ public class ServidorController extends Thread {
         System.out.println("[SERVER] Lista de Clientes: "+clientes+"\n");
         System.out.println("[SERVER] Cliente Desconectado\n");
     }
+    
+    private OutputStream encontraSocket(String usuario){
+        for (int i = 0; i < clientes.size(); i++) {
+            if(usuario.equals(clientes.get(i).getNome())){
+                for (int j = 0; j < socks.size(); j++) {
+                    if(clientes.get(i).getPorta() ==  socks.get(j).getPort()){
+                        try {
+                            return socks.get(j).getOutputStream();
+                        } catch (IOException ex) {
+                            System.err.println("[SERVER] Erro ao encontrar cliente na lista de sockets");
+                            return null;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    private String nomeConexaoAtual(){
+        for (int i = 0; i < socks.size(); i++) {
+            if(socks.get(i).getPort() ==  this.clientSocket.getPort()){
+                for (int j = 0; j < clientes.size(); j++) {
+                    if(clientes.get(j).getPorta() ==  socks.get(i).getPort()){
+                        return clientes.get(j).getNome();
+                    }
+                }
+            }
+        }
+        return "undefined";
+    }
+    
+    
 
     private void atualizarLista(Socket con,JTable tabelaIp) {
         DefaultTableModel modelo = (DefaultTableModel) tabelaIp.getModel();

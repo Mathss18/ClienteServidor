@@ -261,8 +261,7 @@ public class FormularioView extends javax.swing.JFrame {
                 } else {
                     envioChat.put("cod", "92");
                     envioChat.put("usuario", nomeUser);
-                    cc.enviarMensagem(envioChat.toString());
-                    response = cc.escutar();
+                    response = cc.enviarMensagem(envioChat.toString());
                     JSONObject jsonResp = new JSONObject(response);
                     if("72".equals(jsonResp.getString("cod")) && "true".equals(jsonResp.getString("sucesso"))){
                         c = new ChatPacienteView(cc, jsonResp.getString("usuario"), nomeUser);

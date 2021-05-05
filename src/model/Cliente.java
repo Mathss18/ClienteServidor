@@ -14,6 +14,7 @@ public class Cliente {
     private String tipo;
     private String ipcliente;
     private int porta;
+    private boolean isChatting;
 
     @Override
     public String toString() {
@@ -55,5 +56,13 @@ public class Cliente {
 	public void setPorta(int porta) {
 		this.porta = porta;
 	}
+
+    public boolean isIsChatting() {
+        return isChatting;
+    }
+
+    public void setIsChatting(boolean isChatting) {
+        this.isChatting = isChatting;
+    }
     
 }
