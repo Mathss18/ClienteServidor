@@ -3,15 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/git/ClienteServidor/src/controller/ClienteController.java</file>
-            <file>file:/D:/git/ClienteServidor/src/view/Escolha.java</file>
-            <file>file:/D:/git/ClienteServidor/src/model/Hospital.java</file>
-            <file>file:/D:/git/ClienteServidor/src/controller/ServidorController.java</file>
-            <file>file:/D:/git/ClienteServidor/src/Main.java</file>
-            <file>file:/D:/git/ClienteServidor/src/model/Cliente.java</file>
-            <file>file:/D:/git/ClienteServidor/src/view/ChatView.java</file>
-            <file>file:/D:/git/ClienteServidor/src/view/LoginView.java</file>
-            <file>file:/D:/git/ClienteServidor/src/view/FormularioView.java</file>
+            <file>file:/C:/discod/git/ClienteServidor/src/view/ChatSaudeView.java</file>
+            <file>file:/C:/discod/git/ClienteServidor/src/view/LoginView.java</file>
+            <file>file:/C:/discod/git/ClienteServidor/src/controller/ServidorController.java</file>
+            <file>file:/C:/discod/git/ClienteServidor/src/view/ChatPacienteView.java</file>
+            <file>file:/C:/discod/git/ClienteServidor/src/Main.java</file>
+            <file>file:/C:/discod/git/ClienteServidor/src/controller/ClienteController.java</file>
+            <file>file:/C:/discod/git/ClienteServidor/src/view/FormularioView.java</file>
         </group>
     </open-files>
 </project-private>
