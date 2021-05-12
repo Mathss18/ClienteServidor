@@ -177,6 +177,9 @@ public class LoginView extends javax.swing.JFrame {
                     this.dispose();
                     break;
                 case "admin":
+                    EscolhaAdmin ea = new EscolhaAdmin(cc, usuario);
+                    ea.setVisible(conectou);
+                    this.dispose();
                     break;
             }
 

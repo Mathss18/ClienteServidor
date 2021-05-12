@@ -10,6 +10,8 @@ package model;
  * @author rafae
  */
 public class Hospital {
+    
+    private int id;
     private String nome;
     private String endereco;
     private int vagas;
@@ -23,10 +25,15 @@ public class Hospital {
         this.vagas = vagas;
     }
 
-    @Override
-    public String toString() {
-        return "Hospital{" + "nome: " + nome + ", endereco: " + endereco + ", vagas: " + vagas + '}';
+    public int getId() {
+        return id;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    
     
     public String getNome() {
         return nome;
@@ -50,6 +57,11 @@ public class Hospital {
 
     public void setVagas(int vagas) {
         this.vagas = vagas;
+    }
+
+    @Override
+    public String toString() {
+        return "Hospital{" + "id=" + id + ", nome=" + nome + ", endereco=" + endereco + ", vagas=" + vagas + '}';
     }
     
     
