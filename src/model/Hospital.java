@@ -24,6 +24,18 @@ public class Hospital {
         this.endereco = endereco;
         this.vagas = vagas;
     }
+    
+    public Hospital(int id, String nome, String endereco, int vagas) {
+        this.id = id;
+        this.nome = nome;
+        this.endereco = endereco;
+        this.vagas = vagas;
+    }
+
+    public Hospital(int id) {
+        this.id = id;
+    }
+    
 
     public int getId() {
         return id;

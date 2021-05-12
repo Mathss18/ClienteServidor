@@ -181,7 +181,7 @@ public class ChatSaudeView extends javax.swing.JFrame {
     private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
         JSONObject request = new JSONObject();
         request.put("cod", "73");
-        request.put("destino", "usuario");
+        request.put("destino", nomePaciente.getText());
         request.put("msg", txtEnviar.getText());
         cc.enviarSemEscuta(request.toString());
         chat.append("Eu: " + txtEnviar.getText() + "\n");

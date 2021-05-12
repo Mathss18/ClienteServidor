@@ -5,7 +5,6 @@
  */
 package controller;
 
-import javax.swing.JTextArea;
 import org.json.JSONObject;
 import view.ChatPacienteView;
 
@@ -43,8 +42,14 @@ public class ChatPacienteController extends Thread {
     @Override
     public void run()
     {
-        while (true){
+        boolean laco = true;
+        while (laco){
             retorno = tratarDados(conexao.escutar());
+            if("lg".equals(retorno)){
+                laco = false;
+                this.view.dispose();
+                break;
+            }
             if(!"fn".equals(retorno)){
                 conexao.enviarSemEscuta(retorno);
             }
@@ -65,6 +70,8 @@ public class ChatPacienteController extends Thread {
             case "77":
                 confirmaEncerramento(jsonObj);
                 return "fn";
+            case "200":
+                return "lg";
                 
             default:
                 break;
@@ -92,9 +99,7 @@ public class ChatPacienteController extends Thread {
             request.put("sucesso", "true");
             conexao.enviarSemEscuta(request.toString());
             this.conexao.logout();
-            this.view.dispose();
             System.out.println("[PACIENTE] Chat encerrado com sucesso");
-            
         }else{
             System.out.println("[PACIENTE] Codigo diferente de 77 ao encerrar chat");
         }

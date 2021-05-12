@@ -109,7 +109,7 @@ public class HospitalDao {
         return h;
     }
     
-    public boolean update(Hospital h){
+    public int update(Hospital h){
         
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
@@ -119,25 +119,23 @@ public class HospitalDao {
             stmt.setString(1,h.getNome());
             stmt.setString(2,h.getEndereco());
             stmt.setInt(3,h.getVagas());
-            
-            
-            
+            stmt.setInt(4,h.getId());
             
             stmt.executeUpdate();
             System.out.println("[BANCO] Sucesso ao atualizar");
+            return 1;
             
-            
-                    } catch (SQLException ex) {
+        } catch (SQLException ex) {
             Logger.getLogger(HospitalDao.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("[BANCO] Falha ao atualizar");
         }finally{
             ConnectionFactory.closeConnection(con,stmt);
         }
-        return true;
+        return 0;
     
     }
     
-    public void delete(Hospital h){
+    public int delete(Hospital h){
         
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
@@ -150,15 +148,14 @@ public class HospitalDao {
             
             stmt.executeUpdate();
             System.out.println("[BANCO] Sucesso ao remover");
-            
-            
-                    } catch (SQLException ex) {
+            return 1;
+        } catch (SQLException ex) {
             Logger.getLogger(HospitalDao.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("[BANCO] Falha ao remover");
         }finally{
             ConnectionFactory.closeConnection(con,stmt);
         }
-        
+        return 0;
     }
 }
 

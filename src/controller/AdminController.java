@@ -9,8 +9,8 @@ import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+import org.json.JSONArray;
 import org.json.JSONObject;
-import view.ChatPacienteView;
 
 /**
  *
@@ -23,6 +23,14 @@ public class AdminController extends Thread{
     public String adminUser;
     String retorno;
     String cod = "";
+
+    public ClienteController getConexao() {
+        return conexao;
+    }
+
+    public void setConexao(ClienteController conexao) {
+        this.conexao = conexao;
+    }
     
     public AdminController() {
     }
@@ -75,5 +83,32 @@ public class AdminController extends Thread{
         TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(modelo);
         tabela.setRowSorter(tr);
         tr.setRowFilter(RowFilter.regexFilter(query));
+    }
+    
+    public void popularTabela(JTable tabela){
+        JSONObject envioLista = new JSONObject();
+        JSONObject response = new JSONObject();
+        
+        DefaultTableModel modelo = (DefaultTableModel)tabela.getModel();
+        
+        if(modelo.getRowCount()>0){
+            modelo.setNumRows(0);
+        }
+        
+        envioLista.put("cod", "91");
+        response = new JSONObject(this.conexao.enviarMensagem(envioLista.toString()));
+        
+        JSONArray arr = response.getJSONArray("hospitais");
+        
+        for (int i = 0; i < arr.length(); i++) {
+            modelo.addRow(new Object[]{
+                
+                arr.getJSONObject(i).getInt("id"),
+                arr.getJSONObject(i).getString("nome"),
+                arr.getJSONObject(i).getString("endereco"),
+                arr.getJSONObject(i).getInt("vagas")
+                    
+            });
+        }
     }
 }

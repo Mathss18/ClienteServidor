@@ -144,7 +144,7 @@ public class ChatPacienteView extends javax.swing.JFrame {
               
         JSONObject request = new JSONObject();
         request.put("cod", "73");
-        request.put("destino", "saude");
+        request.put("destino",inputNomeSaude.getText());
         request.put("msg", txtEnviar.getText());
         cc.enviarSemEscuta(request.toString());
         chat.append("Eu: " + txtEnviar.getText() + "\n");

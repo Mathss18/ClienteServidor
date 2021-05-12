@@ -7,6 +7,7 @@ package view;
 
 import controller.AdminController;
 import controller.ClienteController;
+import javax.swing.JOptionPane;
 import model.Hospital;
 import org.json.JSONObject;
 
@@ -26,15 +27,10 @@ public class EditarHospital extends javax.swing.JFrame {
     
     public EditarHospital(ClienteController conexao) {
         this.conexao = conexao;
+        this.controller.setConexao(conexao);
         initComponents();
-        
-        JSONObject envioLista = new JSONObject();
-        
-        envioLista.put("cod", "91");
-        response = new JSONObject(conexao.enviarMensagem(envioLista.toString()));
+        this.controller.popularTabela(tabela);
     }
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -240,8 +236,18 @@ public class EditarHospital extends javax.swing.JFrame {
         request.put("nome", inputNome.getText());
         request.put("endereco", inputEndereco.getText());
         request.put("vagas", inputVagas.getText());
-        conexao.enviarSemEscuta(request.toString());
-        
+        JSONObject resposta = new JSONObject(conexao.enviarMensagem(request.toString()));
+        if(resposta.getString("cod").equals("131")){
+            if(resposta.getString("success").equals("true")){
+                JOptionPane.showMessageDialog(null, "Edição realizada com sucesso.");
+                this.controller.popularTabela(tabela);
+            }else
+               JOptionPane.showMessageDialog(null, "Nao foi possivel editar o hospital."); 
+        }   
+        else{
+            System.out.println("[ADMIN] Codigo recebido é invalido "+resposta.getString("cod"));
+            JOptionPane.showMessageDialog(null, "Codigo recebido é invalido");
+        }
     }//GEN-LAST:event_btnEditarActionPerformed
 
     private void tabelaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelaMouseClicked
@@ -249,7 +255,7 @@ public class EditarHospital extends javax.swing.JFrame {
         inputId.setText(tabela.getValueAt(tabela.getSelectedRow(), 0).toString());
         inputNome.setText(tabela.getValueAt(tabela.getSelectedRow(), 1).toString());
         inputEndereco.setText(tabela.getValueAt(tabela.getSelectedRow(), 2).toString());
-        inputEndereco.setText(tabela.getValueAt(tabela.getSelectedRow(), 3).toString());
+        inputVagas.setText(tabela.getValueAt(tabela.getSelectedRow(), 3).toString());
     }//GEN-LAST:event_tabelaMouseClicked
 
     private void tabelaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tabelaKeyReleased
@@ -257,7 +263,7 @@ public class EditarHospital extends javax.swing.JFrame {
         inputId.setText(tabela.getValueAt(tabela.getSelectedRow(), 0).toString());
         inputNome.setText(tabela.getValueAt(tabela.getSelectedRow(), 1).toString());
         inputEndereco.setText(tabela.getValueAt(tabela.getSelectedRow(), 2).toString());
-        inputEndereco.setText(tabela.getValueAt(tabela.getSelectedRow(), 3).toString());
+        inputVagas.setText(tabela.getValueAt(tabela.getSelectedRow(), 3).toString());
     }//GEN-LAST:event_tabelaKeyReleased
 
     private void inputVagasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputVagasActionPerformed

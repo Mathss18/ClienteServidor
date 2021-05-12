@@ -5,7 +5,9 @@
  */
 package view;
 
+import controller.AdminController;
 import controller.ClienteController;
+import javax.swing.JOptionPane;
 import model.Hospital;
 import org.json.JSONObject;
 
@@ -17,6 +19,8 @@ public class ExcluirHospital extends javax.swing.JFrame {
 
     Hospital h = new Hospital();
     ClienteController conexao = new ClienteController();
+    AdminController controller = new AdminController();
+    JSONObject response;
     /**
      * Creates new form ExcluirHospital
      */
@@ -26,7 +30,9 @@ public class ExcluirHospital extends javax.swing.JFrame {
     
     public ExcluirHospital(ClienteController conexao) {
         this.conexao = conexao;
+        this.controller.setConexao(conexao);
         initComponents();
+        this.controller.popularTabela(tabela);
     }
 
     /**
@@ -42,7 +48,7 @@ public class ExcluirHospital extends javax.swing.JFrame {
         btnExcluir = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblSalas = new javax.swing.JTable();
+        tabela = new javax.swing.JTable();
         jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -62,7 +68,7 @@ public class ExcluirHospital extends javax.swing.JFrame {
             }
         });
 
-        tblSalas.setModel(new javax.swing.table.DefaultTableModel(
+        tabela.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -78,17 +84,17 @@ public class ExcluirHospital extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        tblSalas.addMouseListener(new java.awt.event.MouseAdapter() {
+        tabela.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tblSalasMouseClicked(evt);
+                tabelaMouseClicked(evt);
             }
         });
-        tblSalas.addKeyListener(new java.awt.event.KeyAdapter() {
+        tabela.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                tblSalasKeyReleased(evt);
+                tabelaKeyReleased(evt);
             }
         });
-        jScrollPane1.setViewportView(tblSalas);
+        jScrollPane1.setViewportView(tabela);
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel4.setText("Excluir Hospital");
@@ -143,18 +149,30 @@ public class ExcluirHospital extends javax.swing.JFrame {
         JSONObject request = new JSONObject();
         request.put("cod", "14");
         request.put("id", h.getId());
-        conexao.enviarSemEscuta(request.toString());
+        
+        JSONObject resposta = new JSONObject(conexao.enviarMensagem(request.toString()));
+        if(resposta.getString("cod").equals("141")){
+            if(resposta.getString("success").equals("true")){
+                JOptionPane.showMessageDialog(null, "Exclusao realizada com sucesso.");
+                this.controller.popularTabela(tabela);
+            }else
+               JOptionPane.showMessageDialog(null, "Nao foi possivel excluir o hospital."); 
+        }   
+        else{
+            System.out.println("[ADMIN] Codigo recebido é invalido "+resposta.getString("cod"));
+            JOptionPane.showMessageDialog(null, "Codigo recebido é invalido");
+        }
     }//GEN-LAST:event_btnExcluirActionPerformed
 
-    private void tblSalasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSalasMouseClicked
+    private void tabelaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelaMouseClicked
         // TODO add your handling code here:
-        h.setId((int) tblSalas.getValueAt(tblSalas.getSelectedRow(), 0));
-    }//GEN-LAST:event_tblSalasMouseClicked
+        h.setId((int) tabela.getValueAt(tabela.getSelectedRow(), 0));
+    }//GEN-LAST:event_tabelaMouseClicked
 
-    private void tblSalasKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblSalasKeyReleased
+    private void tabelaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tabelaKeyReleased
         // TODO add your handling code here:
-        h.setId((int) tblSalas.getValueAt(tblSalas.getSelectedRow(), 0));
-    }//GEN-LAST:event_tblSalasKeyReleased
+        h.setId((int) tabela.getValueAt(tabela.getSelectedRow(), 0));
+    }//GEN-LAST:event_tabelaKeyReleased
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
@@ -202,6 +220,6 @@ public class ExcluirHospital extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tblSalas;
+    private javax.swing.JTable tabela;
     // End of variables declaration//GEN-END:variables
 }

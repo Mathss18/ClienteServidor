@@ -134,7 +134,11 @@ public class ServidorController extends Thread {
                 redirecionaMensagem(jsonObj);
                 return "fn";
             case "12":
-                return cadastrarHospital(jsonObj);               
+                return cadastrarHospital(jsonObj);
+            case "13":
+                return editarHospital(jsonObj);
+            case "14":
+                return excluirHospital(jsonObj);
             default:
                 break;
 
@@ -341,7 +345,7 @@ public class ServidorController extends Thread {
         //output.close();
         //clientSocket.close();
         
-
+        System.out.println("[SERVER] Enviado para o cliente: "+response.toString()+"\n");
         System.out.println("[SERVER] Lista de Clientes: "+clientes+"\n");
         System.out.println("[SERVER] Cliente Desconectado\n");
         return response.toString();
@@ -400,5 +404,39 @@ public class ServidorController extends Thread {
         System.out.println("[SERVER] Enviado para o Cliente: "+response.toString());
         return response.toString();
         
+    }
+    private String editarHospital(JSONObject jsonObj) {
+        JSONObject response = new JSONObject();
+        
+        Hospital h = new Hospital(jsonObj.getInt("id"),jsonObj.getString("nome"),jsonObj.getString("endereco"),jsonObj.getInt("vagas"));
+        
+        HospitalDao hDao = new HospitalDao();
+        
+        response.put("success", "false");
+        response.put("cod", "131");
+        
+        if(hDao.update(h) > 0)
+            response.put("success", "true");
+        
+        System.out.println("[SERVER] Enviado para o Cliente: "+response.toString());
+        
+        return response.toString();
+    }
+    private String excluirHospital(JSONObject jsonObj) {
+        JSONObject response = new JSONObject();
+        
+        Hospital h = new Hospital(jsonObj.getInt("id"));
+        
+        HospitalDao hDao = new HospitalDao();
+        
+        response.put("success", "false");
+        response.put("cod", "141");
+        
+        if(hDao.delete(h) > 0)
+            response.put("success", "true");
+        
+        System.out.println("[SERVER] Enviado para o Cliente: "+response.toString());
+        
+        return response.toString();
     }
 }

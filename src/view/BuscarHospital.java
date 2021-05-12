@@ -7,6 +7,8 @@ package view;
 
 import controller.AdminController;
 import controller.ClienteController;
+import javax.swing.table.DefaultTableModel;
+import org.json.JSONObject;
 
 /**
  *
@@ -15,18 +17,19 @@ import controller.ClienteController;
 public class BuscarHospital extends javax.swing.JFrame {
     AdminController controller = new AdminController();
     ClienteController conexao = new ClienteController();
-    /**
-     * Creates new form BuscarHospital
-     */
+    JSONObject response;
+    DefaultTableModel modelo;
+    
     public BuscarHospital() {
         initComponents();
     }
     
     public BuscarHospital(ClienteController conexao) {
         this.conexao = conexao;
+        this.controller.setConexao(conexao);
         initComponents();
+        this.controller.popularTabela(tabela);
     }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

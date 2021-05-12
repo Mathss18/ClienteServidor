@@ -43,8 +43,13 @@ public class ChatSaudeController extends Thread {
     @Override
     public void run()
     {
-        while (true){
+        boolean laco = true;
+        while (laco){
             retorno = tratarDados(conexao.escutar());
+            if("lg".equals(retorno)){
+                laco = false;
+                break;
+            }
             if(!"fn".equals(retorno)){
              conexao.enviarSemEscuta(retorno);
             }
@@ -67,6 +72,9 @@ public class ChatSaudeController extends Thread {
             case "76":
                 confirmaEncerramento(jsonObj);
                 return "fn";
+            case "200":
+                logout(jsonObj);
+                return "lg";
             default:
                 break;
 
@@ -114,6 +122,18 @@ public class ChatSaudeController extends Thread {
         }
     }
     
-    
+    public void logout(JSONObject dados){
+        
+        if("200".equals(dados.getString("cod"))){
+            if("true".equals(dados.getString("success"))){
+                System.out.println("[SAUDE] Logout realizado");
+                this.conexao.logout();
+            }else{
+                System.out.println("[SAUDE] Nao foi possivel realizar logout");
+            }
+        }else{
+            System.out.println("[SAUDE] Codigo diferente de 200 ao realizar logout");
+        }
+    }
     
 }

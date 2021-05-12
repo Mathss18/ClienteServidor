@@ -6,7 +6,6 @@
 package view;
 
 import controller.ClienteController;
-import java.io.IOException;
 import javax.swing.JOptionPane;
 import org.json.JSONArray;
 import org.json.JSONObject;
