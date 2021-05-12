@@ -8,11 +8,13 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import model.Chat;
 import model.Cliente;
 import model.Hospital;
+import modelDao.HospitalDao;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -24,10 +26,8 @@ public class ServidorController extends Thread {
     private static ArrayList<Socket> socks;
     private static ArrayList<Chat> chats;
     private Cliente c = new Cliente();
+   
     
-    private static ArrayList<Hospital> hospitais = new ArrayList<>();
-    private Hospital h1 = new Hospital("nome","rua numero bairro",11);
-    private Hospital h2 = new Hospital("nome2","rua numero bairro2",12);
    
     //Variaveis de Comunicação
     private PrintWriter output;
@@ -79,8 +79,6 @@ public class ServidorController extends Thread {
     }
 
     public void abrirServidor(int porta, JTable tabelaIp) {
-        hospitais.add(h1);
-        hospitais.add(h2);
         try {
             //Cria os objetos necessário para instânciar o servidor
             serverSocket = new ServerSocket(porta);
@@ -135,7 +133,8 @@ public class ServidorController extends Thread {
             case "73":
                 redirecionaMensagem(jsonObj);
                 return "fn";
-                
+            case "12":
+                return cadastrarHospital(jsonObj);               
             default:
                 break;
 
@@ -144,11 +143,14 @@ public class ServidorController extends Thread {
     }
     
     private String enviarHospitais(){
+        HospitalDao hDao = new HospitalDao(); 
+        List<Hospital> hospitais = hDao.find();
         JSONObject response = new JSONObject();
         response.put("cod", "10");
         
         for (int i = 0; i < hospitais.size(); i++) {
             JSONObject hospital = new JSONObject();
+            hospital.put("id", hospitais.get(i).getId());
             hospital.put("nome", hospitais.get(i).getNome());
             hospital.put("endereco", hospitais.get(i).getEndereco());
             hospital.put("vagas", hospitais.get(i).getVagas());
@@ -384,5 +386,19 @@ public class ServidorController extends Thread {
             con.getPort()
         };
         modelo.addRow(dados);
+    }
+
+    private String cadastrarHospital(JSONObject jsonObj) {
+        JSONObject response = new JSONObject();
+        
+        Hospital h = new Hospital(jsonObj.getString("nome"),jsonObj.getString("endereco"),jsonObj.getInt("vagas"));
+        HospitalDao hDao = new HospitalDao();
+        response.put("success", "false");
+        response.put("cod", "121");
+        if(hDao.create(h) > 0)
+            response.put("success", "true");
+        System.out.println("[SERVER] Enviado para o Cliente: "+response.toString());
+        return response.toString();
+        
     }
 }

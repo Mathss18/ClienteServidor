@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import model.Hospital;
 
 /**
@@ -21,30 +20,28 @@ import model.Hospital;
  * @author Matheus
  */
 public class HospitalDao {
-    public void create(Hospital h){
+    public int create(Hospital h){
         
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
         
         try {
-            stmt = con.prepareStatement("INSERT INTO hospitais (nome,endereco,vagas)VALUES(?,?)");
+            stmt = con.prepareStatement("INSERT INTO hospitais (nome,endereco,vagas)VALUES(?,?,?)");
             stmt.setString(1,h.getNome());
             stmt.setString(2,h.getEndereco());
             stmt.setInt(3,h.getVagas());
 
            
-            
-            stmt.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Salvo Com Sucesso!"); 
-            
-            
+            System.out.println("[BANCO] Salvo com sucesso");
+            return stmt.executeUpdate();
+
                     } catch (SQLException ex) {
             Logger.getLogger(HospitalDao.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, "Falha ao Cadastrar Hospital " + ex,"ERRO",JOptionPane.ERROR_MESSAGE); 
+            System.out.println("[BANCO] Falha ao cadastrar hospital");
         }finally{
             ConnectionFactory.closeConnection(con,stmt);
         }
-        
+        return 0;
     }
     
     public List<Hospital> find(){
@@ -72,7 +69,7 @@ public class HospitalDao {
             }
                     
                     } catch (SQLException ex) {
-                        JOptionPane.showMessageDialog(null, "Falha Do Tipo:" + ex,"ERRO",JOptionPane.ERROR_MESSAGE); 
+                        System.out.println("[BANCO] Falha ao listar hospitais");
             Logger.getLogger(HospitalDao.class.getName()).log(Level.SEVERE, null, ex);
         }finally{
             ConnectionFactory.closeConnection(con, stmt, rs);
@@ -104,7 +101,7 @@ public class HospitalDao {
             }
                     
                     } catch (SQLException ex) {
-                        JOptionPane.showMessageDialog(null, "Falha Do Tipo:" + ex,"ERRO",JOptionPane.ERROR_MESSAGE); 
+                        System.out.println("[BANCO] Falha ao listar hospital");
             Logger.getLogger(HospitalDao.class.getName()).log(Level.SEVERE, null, ex);
         }finally{
             ConnectionFactory.closeConnection(con, stmt, rs);
@@ -127,12 +124,12 @@ public class HospitalDao {
             
             
             stmt.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Atualizado Com Sucesso!"); 
+            System.out.println("[BANCO] Sucesso ao atualizar");
             
             
                     } catch (SQLException ex) {
             Logger.getLogger(HospitalDao.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, "Erro ao Atualizar! " + ex); 
+            System.out.println("[BANCO] Falha ao atualizar");
         }finally{
             ConnectionFactory.closeConnection(con,stmt);
         }
@@ -152,12 +149,12 @@ public class HospitalDao {
            
             
             stmt.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Removido Com Sucesso!"); 
+            System.out.println("[BANCO] Sucesso ao remover");
             
             
                     } catch (SQLException ex) {
             Logger.getLogger(HospitalDao.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, "Erro ao Excluir! "); 
+            System.out.println("[BANCO] Falha ao remover");
         }finally{
             ConnectionFactory.closeConnection(con,stmt);
         }

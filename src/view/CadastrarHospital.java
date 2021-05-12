@@ -6,6 +6,7 @@
 package view;
 
 import controller.ClienteController;
+import javax.swing.JOptionPane;
 import org.json.JSONObject;
 
 /**
@@ -145,11 +146,23 @@ public class CadastrarHospital extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         JSONObject request = new JSONObject();
+        
         request.put("cod", "12");
         request.put("nome", inputNome.getText());
         request.put("endereco", inputEndereco.getText());
         request.put("vagas", inputVagas.getText());
-        conexao.enviarSemEscuta(request.toString());
+        JSONObject response = new JSONObject(conexao.enviarMensagem(request.toString()));
+        if(response.getString("cod").equals("121")){
+            if(response.getString("success").equals("true"))
+                JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso.");
+            else
+               JOptionPane.showMessageDialog(null, "Nao foi possivel cadastrar o hospital."); 
+        }   
+        else{
+            System.out.println("[ADMIN] Codigo recebido é invalido "+response.getString("cod"));
+            JOptionPane.showMessageDialog(null, "Codigo recebido é invalido");
+        }
+            
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed

@@ -8,7 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import static modelDao.ConnectionFactory.closeConnection;
 
 /**
@@ -30,7 +29,8 @@ public class ConnectionFactory {
             return DriverManager.getConnection(URL,USER,PASS);
                     
         } catch (ClassNotFoundException | SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Falha ao Conectar");
+            System.out.println("[BANCO] Falha ao conectar");
+            
             throw new RuntimeException("Erro na conexão: ",ex);
             
         }

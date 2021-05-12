@@ -18,6 +18,7 @@ public class EditarHospital extends javax.swing.JFrame {
 
     ClienteController conexao = new ClienteController();
     AdminController controller = new AdminController();
+    JSONObject response;
     
     public EditarHospital() {
         initComponents();
@@ -26,6 +27,11 @@ public class EditarHospital extends javax.swing.JFrame {
     public EditarHospital(ClienteController conexao) {
         this.conexao = conexao;
         initComponents();
+        
+        JSONObject envioLista = new JSONObject();
+        
+        envioLista.put("cod", "91");
+        response = new JSONObject(conexao.enviarMensagem(envioLista.toString()));
     }
     
     
